@@ -33,8 +33,7 @@ public class BedmintonAgent : Agent
     bool hitting;
     bool jumping;
     Area Area;
-    //float BatDegree;
-    //float BodyDegree;
+    float distToMate;
 
     // Looks for the scoreboard based on the name of the gameObjects.
     // Do not modify the names of the Score GameObjects
@@ -58,82 +57,69 @@ public class BedmintonAgent : Agent
 
     }
 
+    float Normalize(float cur,float min,float max)
+    {
+        return (cur - min) / (max - min);
+    }
 
-    //需要：添加队友、对手信息、添加z轴信息
+  
     public override void CollectObservations(VectorSensor sensor)
     {
-        //agent离球网的距离
-        sensor.AddObservation(m_InvertMult * (transform.position.x - myArea.transform.position.x));
-        //球场原点至agent的距离（高度)e
-        sensor.AddObservation(transform.position.y - myArea.transform.position.y);
-        
-        sensor.AddObservation(m_InvertMult * transform.position.z);
-        //agent当前x轴方向速度
-        sensor.AddObservation(m_InvertMult * m_AgentRb.velocity.x);
-        //agent当前y轴方向速度（纵向）
-        sensor.AddObservation(m_AgentRb.velocity.y);
-         
-        sensor.AddObservation(m_InvertMult * m_AgentRb.velocity.z);
-        
-        
+        //球相对人的参数，前向、右向为正
+        sensor.AddObservation(Normalize(-m_InvertMult*(ball.transform.position.x - transform.position.x), -12f, 24f));
+        sensor.AddObservation(Normalize(ball.transform.position.y - transform.position.y,-1.039f , 15.3f));
+        sensor.AddObservation(Normalize(m_InvertMult * (ball.transform.position.z - ball.transform.position.z),-12f, 12f));
+        sensor.AddObservation(Normalize(-m_InvertMult*m_BallRb.velocity.x,-50f,50f));
+        sensor.AddObservation(Normalize( m_BallRb.velocity.y, -30f, 30f));
+        sensor.AddObservation(Normalize(m_InvertMult * m_BallRb.velocity.z, -50f, 50f));
+
+        sensor.AddObservation(Normalize(m_InvertMult * (transform.position.x - myArea.transform.position.x),0f,12f));
+        sensor.AddObservation(Normalize(-(transform.position.y - myArea.transform.position.y),3f,7f));
+        sensor.AddObservation(Normalize(m_InvertMult * (transform.position.z-myArea.transform.position.z), -5f, 5f));
+        sensor.AddObservation(Normalize(-m_InvertMult * m_AgentRb.velocity.x, -50f, 50f));
+        sensor.AddObservation(Normalize(m_AgentRb.velocity.y, -4f, 4f));
+        sensor.AddObservation(Normalize(m_InvertMult * m_AgentRb.velocity.z, -50f, 50f));
+
         Agent[,] agents=new Agent[2,2]{{Area.t1_AgentA,Area.t1_AgentB},{Area.t2_AgentA,Area.t2_AgentB}};
         int m_teamNo=invertX?0:1;
-        int op_teamNo=invertX?1:0;
         for(int i=0;i<2;i++)
         { 
             var agent=agents[m_teamNo,i];           
             if(agent!=this)
             {
                 Rigidbody a_RB=agent.GetComponent<Rigidbody>();
-                sensor.AddObservation(m_InvertMult * (agent.transform.position.x - myArea.transform.position.x));
-
-                sensor.AddObservation(agent.transform.position.y - myArea.transform.position.y);
-
-                sensor.AddObservation(m_InvertMult * agent.transform.position.z);
-
-                sensor.AddObservation(m_InvertMult * a_RB.velocity.x);
-
-                sensor.AddObservation(a_RB.velocity.y);
-                
-                sensor.AddObservation(m_InvertMult * a_RB.velocity.z);
+                sensor.AddObservation(Normalize(m_InvertMult * (agent.transform.position.x - myArea.transform.position.x), 0f, 12f));
+                sensor.AddObservation(Normalize(-(agent.transform.position.y - myArea.transform.position.y), 3f, 7f));
+                sensor.AddObservation(Normalize(m_InvertMult * (agent.transform.position.z - myArea.transform.position.z), -5f, 5f));
+                sensor.AddObservation(Normalize(-m_InvertMult * a_RB.velocity.x, -50f, 50f));
+                sensor.AddObservation(Normalize(a_RB.velocity.y, -4f, 4f));
+                sensor.AddObservation(Normalize(m_InvertMult * a_RB.velocity.z, -50f, 50f));
+                distToMate = Mathf.Abs(Vector3.Distance(agent.transform.position, transform.position));
+                sensor.AddObservation(Normalize(distToMate,2.2f,17f));
             }
         }
         for(int i=0;i<2;i++)
         {
-            var agent=agents[1-m_teamNo,i];  
+            var agent=agents[1-m_teamNo,i];
+            var o_InvertMult = -m_InvertMult;
             Rigidbody a_RB=agent.GetComponent<Rigidbody>();
-            sensor.AddObservation(m_InvertMult * (agent.transform.position.x - myArea.transform.position.x));
-
-            sensor.AddObservation(agent.transform.position.y - myArea.transform.position.y);
-
-            sensor.AddObservation(m_InvertMult * agent.transform.position.z);
-
-            sensor.AddObservation(m_InvertMult * a_RB.velocity.x);
-
-            sensor.AddObservation(a_RB.velocity.y);
-            
-            sensor.AddObservation(m_InvertMult * a_RB.velocity.z);
+            sensor.AddObservation(Normalize(o_InvertMult * (agent.transform.position.x - myArea.transform.position.x), 0f, 12f));
+            sensor.AddObservation(Normalize(-(agent.transform.position.y - myArea.transform.position.y), 3f, 7f));
+            sensor.AddObservation(Normalize(o_InvertMult * (agent.transform.position.z - myArea.transform.position.z), -5f, 5f));
+            sensor.AddObservation(Normalize(-o_InvertMult * a_RB.velocity.x, -50f, 50f));
+            sensor.AddObservation(Normalize(a_RB.velocity.y, -4f, 4f));
+            sensor.AddObservation(Normalize(o_InvertMult * a_RB.velocity.z, -50f, 50f));
         }
+            
+       
         
-
-        //球离球网的距离
-        sensor.AddObservation(m_InvertMult * (ball.transform.position.x - myArea.transform.position.x));
-        //球场原点至球的距离（高度)
-        sensor.AddObservation(ball.transform.position.y - myArea.transform.position.y);
-        //球当前x轴方向速度
-        sensor.AddObservation(m_InvertMult * m_BallRb.velocity.x);
-        //球当前y轴方向速度（纵向）
-        sensor.AddObservation(m_BallRb.velocity.y);
-
-        sensor.AddObservation(m_InvertMult * m_BallRb.velocity.z);
-
-        //agent的rotation中的一维
-        sensor.AddObservation(m_InvertMult * m_AgentRb.transform.localEulerAngles.z);
     }
 
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
+        //防止距离过近
+        AddReward(-0.00025f * (1 - Normalize(distToMate, 2.2f, 17f)));
 
         var discreteActions = actionBuffers.DiscreteActions;
         var Axis = discreteActions[3];
@@ -173,7 +159,7 @@ public class BedmintonAgent : Agent
             case 1:
                 RotateBat = 1;
                 break;
-            case 2:
+            case 0:
                 RotateBat = -1;
                 break;
         }
@@ -223,6 +209,8 @@ public class BedmintonAgent : Agent
         if (!jumping && Jump==1)
         {
             jumping = true;
+
+            //如果改了这个jump力，那么需要改观测值上下限！
             m_AgentRb.AddForce(new Vector3(0f,4f,0f), ForceMode.VelocityChange);
         }
         m_AgentRb.AddForce(new Vector3(dirToGo.x, 0f , dirToGo.z), ForceMode.VelocityChange);
@@ -252,7 +240,7 @@ public class BedmintonAgent : Agent
         //continuousActionsOut[2] = Input.GetAxis("RotateBody");
 
         discreteActionsOut[0] = Input.GetKey(KeyCode.Space) ? 1 : 0; // agent Jumping
-        discreteActionsOut[1] = Input.GetMouseButton(0) ? 1 : 2;  // agent Hiting
+        discreteActionsOut[1] = Input.GetMouseButton(0) ? 1 : 0;  // agent Hiting
         if(Input.GetKey(KeyCode.E))
         {
             discreteActionsOut[2] = 1;
