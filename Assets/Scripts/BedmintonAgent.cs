@@ -21,7 +21,8 @@ public class BedmintonAgent : Agent
     public float BodyRotateSpeed;
     public float m_endurance;
     public float AgentResetLocalY;
-
+    public float testForce;
+    public float BatSpringForce;
 
 
     Text m_TextComponent;
@@ -29,10 +30,11 @@ public class BedmintonAgent : Agent
     Rigidbody m_BallRb;
     float m_InvertMult;
     EnvironmentParameters m_ResetParams;
-    
+    bool hitting;
+    bool jumping;
     Area Area;
-    float BatDegree;
-    float BodyDegree;
+    //float BatDegree;
+    //float BodyDegree;
 
     // Looks for the scoreboard based on the name of the gameObjects.
     // Do not modify the names of the Score GameObjects
@@ -130,68 +132,103 @@ public class BedmintonAgent : Agent
     }
 
 
-    //需要：添加z轴信息v
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
-        var continuousActions = actionBuffers.ContinuousActions;
-        var discreteActions = actionBuffers.DiscreteActions;
-        //var moveX = Mathf.Clamp(continuousActions[0], -1f, 1f) * -m_InvertMult;
-        //var moveY = Mathf.Clamp(continuousActions[1], -1f, 1f);
-        //var moveZ = Mathf.Clamp(continuousActions[2], -1f, 1f) * m_InvertMult;
-        //var RotateBat = Mathf.Clamp(continuousActions[3], -1f, 1f);
-        //var RotateBody = Mathf.Clamp(continuousActions[4], -1f, 1f);
-        var moveX= Mathf.Clamp(continuousActions[0], -1f, 1f) * -m_InvertMult;
-        var moveZ = Mathf.Clamp(continuousActions[1], -1f, 1f) * m_InvertMult;
 
+        var discreteActions = actionBuffers.DiscreteActions;
+        var Axis = discreteActions[3];
+        var dirToGo = Vector3.zero;
+        var RotToGo = Vector3.zero;
+        switch (Axis)
+        {
+            case 1:
+                dirToGo = transform.forward * moveSpeedX;
+                m_endurance -= 0.1f;
+                break;
+            case 2:
+                dirToGo = -transform.forward * moveSpeedX;
+                m_endurance -= 0.1f;
+                break;
+            case 3:
+                dirToGo = transform.right * moveSpeedZ;
+                m_endurance -= 0.1f;
+                break;
+            case 4:
+                dirToGo = -transform.right * moveSpeedZ;
+                m_endurance -= 0.1f;
+                break;
+        }
+        
         // 0-1
         var Jump = discreteActions[0];
-        //-1-1
+        m_endurance -= 0.3f * Jump;
+        
         var RotateBat = discreteActions[1];
+        m_endurance -= 0.1f * Mathf.Abs(RotateBat);
         //-1-1
         var RotateBody = discreteActions[2];
-        m_endurance = Mathf.Clamp( m_endurance - (Mathf.Abs(moveX) + Mathf.Abs(Jump) + Mathf.Abs(moveZ) + Mathf.Abs(RotateBat) + Mathf.Abs(RotateBody)) * 0.1f,0f,100f);
-
-        if (m_endurance == 0)
+        m_endurance -= 0.1f * Mathf.Abs(RotateBody);
+        switch (RotateBat)
         {
-            moveX = 0;
-            moveZ = 0;
-            RotateBat = -1;
-            RotateBody = 0;
+            case 1:
+                RotateBat = 1;
+                break;
+            case 2:
+                RotateBat = -1;
+                break;
+        }
+        switch (RotateBody)
+        {
+            case 1:
+                RotToGo = transform.up;
+                break;
+            case 2:
+                RotToGo = -transform.up;
+                break;
         }
 
-        if (transform.position.y - transform.parent.position.y > AgentResetLocalY + 0.1)
+
+        var BatJoint = Bat.GetComponent<HingeJoint>();
+        var spring = BatJoint.spring;
+
+        if (!hitting && RotateBat == 1)
         {
-            Jump = 0;
+            hitting = true;
+            spring.targetPosition = 120f;
+            spring.spring = BatSpringForce;
+            spring.damper = 50f;
+            BatJoint.spring = spring;
 
         }
-
-        if (Jump ==1 && transform.position.y - transform.parent.transform.position.y < -1.5f)
+        else if (RotateBat == -1)
         {
-            m_AgentRb.velocity = new Vector3(m_AgentRb.velocity.x, 7f, m_AgentRb.velocity.z);
-
+            hitting = false;
+            spring.targetPosition = 0f;
+            spring.spring = BatSpringForce/2;
+            spring.damper = 100f;
+            BatJoint.spring = spring;
         }
-        m_AgentRb.velocity = new Vector3(moveX * moveSpeedX, m_AgentRb.velocity.y, moveZ * moveSpeedZ);
 
 
-        //BatDegree += RotateBat * 3f;
-        //BatDegree = Mathf.Clamp(BatDegree, 0f, 90f);
-        //Vector3 Up = new Vector3(0, 1, 0);
-        //Vector3 Normal = Quaternion.AngleAxis(BatDegree, new Vector3(0,0,1))* Up;
-        //Debug.DrawLine(Bat.transform.position, Bat.transform.position + Normal);
-        //Bat.GetComponent<Rigidbody>().AddForce(Normal * 0.001f);
-
-        BatDegree += RotateBat * BatRotateSpeed;
-        BatDegree = Mathf.Clamp(BatDegree, 45f, 120f);
-        Bat.transform.localEulerAngles = new Vector3(BatDegree, 0, 0);
-
-        //Rigidbody Bat_RigidBody = Bat.GetComponent<Rigidbody>();
-        //Vector3 Bat_Up = new Vector3(0,0,0);
-        //Bat_RigidBody.velocity = new Vector3(0, 1, 0);
 
 
-        BodyDegree = m_AgentRb.transform.localEulerAngles.y + BodyRotateSpeed * RotateBody;
-        m_AgentRb.transform.localEulerAngles = new Vector3(m_AgentRb.transform.localEulerAngles.x, BodyDegree, m_AgentRb.transform.localEulerAngles.z);
+        transform.Rotate(RotToGo, Time.deltaTime * 100f);
 
+
+        if ( transform.parent.position.y - transform.position.y > -AgentResetLocalY-0.01f )
+        {
+            jumping = false;
+        }
+
+        if (!jumping && Jump==1)
+        {
+            jumping = true;
+            m_AgentRb.AddForce(new Vector3(0f,4f,0f), ForceMode.VelocityChange);
+        }
+        m_AgentRb.AddForce(new Vector3(dirToGo.x, 0f , dirToGo.z), ForceMode.VelocityChange);
+
+
+        
         //防止越界!!!!!!!??????
         if (invertX && transform.position.x - transform.parent.transform.position.x > m_InvertMult ||
             !invertX && transform.position.x - transform.parent.transform.position.x < m_InvertMult)
@@ -206,46 +243,65 @@ public class BedmintonAgent : Agent
     public override void Heuristic(in ActionBuffers actionsOut)
     {
         
-        var continuousActionsOut = actionsOut.ContinuousActions;
         var discreteActionsOut = actionsOut.DiscreteActions;
         
-        continuousActionsOut[0] = Input.GetAxis("Vertical");    // Racket Movement
+        //continuousActionsOut[0] = Input.GetAxis("Vertical");    // Racket Movement
         //continuousActionsOut[1] = Input.GetKey(KeyCode.Space) ? 1f : 0f;   // Racket Jumping
-        continuousActionsOut[1] = Input.GetAxis("Horizontal");   // Racket Movement
+        //continuousActionsOut[1] = Input.GetAxis("Horizontal");   // Racket Movement
         //continuousActionsOut[2] = Input.GetMouseButton(0)? 1f : -1f;
         //continuousActionsOut[2] = Input.GetAxis("RotateBody");
 
         discreteActionsOut[0] = Input.GetKey(KeyCode.Space) ? 1 : 0; // agent Jumping
-        discreteActionsOut[1] = Input.GetMouseButton(0) ? 1 : -1;  // agent Hiting
+        discreteActionsOut[1] = Input.GetMouseButton(0) ? 1 : 2;  // agent Hiting
         if(Input.GetKey(KeyCode.E))
         {
             discreteActionsOut[2] = 1;
         }
         else if(Input.GetKey(KeyCode.Q))
         {
-            discreteActionsOut[2] = -1;
+            discreteActionsOut[2] = 2;
         }
         else
         {
             discreteActionsOut[2] = 0;
         }
 
+        if (Input.GetKey(KeyCode.W))
+        {
+            discreteActionsOut[3] = 1;
+        }
+        else if (Input.GetKey(KeyCode.S))
+        {
+            discreteActionsOut[3] = 2;
+        }
+        else if(Input.GetKey(KeyCode.D))
+        {
+            discreteActionsOut[3] = 3;
+        }
+        else if(Input.GetKey(KeyCode.A))
+        {
+            discreteActionsOut[3] = 4;
+        }
+        else
+        {
+            discreteActionsOut[3] = 0;
+        }
     }
 
     public override void OnEpisodeBegin()
     {
-        BatDegree = 0;
-        BodyDegree = 0;
-
+        //BatDegree = 0;
+        //BodyDegree = 0;
+        
         m_endurance =100f;
         // transform.position = new Vector3(-m_InvertMult * Random.Range(6f, 8f), -1.5f, -1.8f) + transform.parent.transform.position;
         if (id==1)
         {
-            transform.position = new Vector3(m_InvertMult * Random.Range(2f, 4f), AgentResetLocalY, 0f) + transform.parent.transform.position;
+            transform.position = new Vector3(m_InvertMult * 3f, AgentResetLocalY, 0f) + transform.parent.transform.position;
         }
         if(id==2)
         {
-            transform.position = new Vector3(m_InvertMult * Random.Range(6f, 8f), AgentResetLocalY, 0f) + transform.parent.transform.position;
+            transform.position = new Vector3(m_InvertMult * 7f, AgentResetLocalY, 0f) + transform.parent.transform.position;
         }
 
         m_AgentRb.velocity = new Vector3(0f, 0f, 0f);
@@ -282,5 +338,8 @@ public class BedmintonAgent : Agent
         
     }
 
-
+    //private void OnCollisionEnter(Collision collision)
+    //{
+    //    Debug.Log(collision.collider.name);
+    //}
 }

@@ -9,6 +9,8 @@ public class HitWall : MonoBehaviour
     public bool net;
     public float TimePaneltyRate;
 
+    bool flag;
+
     public enum FloorHit
     {
         Service,
@@ -28,6 +30,7 @@ public class HitWall : MonoBehaviour
     //  Use this for initialization
     void Start()
     {
+        flag = false;
         m_Area = areaObject.GetComponent<Area>();
         t1_AgentA = m_Area.t1_AgentA;
         t1_AgentB = m_Area.t1_AgentB;
@@ -36,29 +39,30 @@ public class HitWall : MonoBehaviour
         t2_AgentB = m_Area.t2_AgentB;
     }
 
-    //void SetEndurancePanelty()
-    //{
-    //    //t1_AgentA.AddReward(-(100 - t1_AgentA.m_endurance) * TimePaneltyRate);
-    //    //t1_AgentB.AddReward(-(100 - t1_AgentB.m_endurance) * TimePaneltyRate);
-    //    //t2_AgentA.AddReward(-(100 - t2_AgentA.m_endurance) * TimePaneltyRate);
-    //    //t2_AgentB.AddReward(-(100 - t2_AgentB.m_endurance) * TimePaneltyRate);
+    void SetEndurancePanelty()
+    {
+        t1_AgentA.AddReward(-(100 - t1_AgentA.m_endurance) * TimePaneltyRate);
+        t1_AgentB.AddReward(-(100 - t1_AgentB.m_endurance) * TimePaneltyRate);
+        t2_AgentA.AddReward(-(100 - t2_AgentA.m_endurance) * TimePaneltyRate);
+        t2_AgentB.AddReward(-(100 - t2_AgentB.m_endurance) * TimePaneltyRate);
 
-    //    t1_AgentA.AddReward(-m_Area.stepPassed * TimePaneltyRate);
-    //    t1_AgentB.AddReward(-m_Area.stepPassed * TimePaneltyRate);
-    //    t2_AgentA.AddReward(-m_Area.stepPassed * TimePaneltyRate);
-    //    t2_AgentB.AddReward(-m_Area.stepPassed * TimePaneltyRate);
-    //}
+        //t1_AgentA.AddReward(-m_Area.stepPassed * TimePaneltyRate);
+        //t1_AgentB.AddReward(-m_Area.stepPassed * TimePaneltyRate);
+        //t2_AgentA.AddReward(-m_Area.stepPassed * TimePaneltyRate);
+        //t2_AgentB.AddReward(-m_Area.stepPassed * TimePaneltyRate);
+    }
 
     void Reset()
     {
-       
+        flag = false;
+
         t1_AgentA.EndEpisode();
         t1_AgentB.EndEpisode();
         t2_AgentA.EndEpisode();
         t2_AgentB.EndEpisode();
 
         m_Area.MatchReset();
-        lastFloorHit = FloorHit.Service;
+        lastAgentHit = -1;
         //net = false;
     }
 
@@ -71,9 +75,9 @@ public class HitWall : MonoBehaviour
         t2_AgentB.AddReward(-1);
         t1_AgentA.score += 1;
         t1_AgentB.score += 1;
-        //SetEndurancePanelty();
-        t1_AgentA.AddReward(-m_Area.stepPassed * TimePaneltyRate);
-        t1_AgentB.AddReward(-m_Area.stepPassed * TimePaneltyRate);
+
+        SetEndurancePanelty();
+
         Reset();
         m_Area.isEnding = true;
     }
@@ -87,29 +91,26 @@ public class HitWall : MonoBehaviour
         t2_AgentB.SetReward(1);
         t2_AgentA.score += 1;
         t2_AgentB.score += 1;
-        //SetEndurancePanelty();
-        t2_AgentA.AddReward(-m_Area.stepPassed * TimePaneltyRate);
-        t2_AgentB.AddReward(-m_Area.stepPassed * TimePaneltyRate);
+
+        SetEndurancePanelty();
+
         Reset();
         m_Area.isEnding = true;
                 t2_AgentA.AddReward(-m_Area.stepPassed * TimePaneltyRate);
         t2_AgentB.AddReward(-m_Area.stepPassed * TimePaneltyRate);
     }
-
-    void OnCollisionEnter(Collision collision)
+    private void OnCollisionExit(Collision collision)
     {
         if (collision.gameObject.CompareTag("iWall"))
         {
             if (collision.gameObject.name == "wallA" || collision.gameObject.name == "wallC" || collision.gameObject.name == "wallD")
             {
                 // Agent A hits into wall or agent B hit a winner
-                //if (lastAgentHit == 0 || lastFloorHit == FloorHit.FloorAHit)
-                if (lastAgentHit == 0 )
+                if (lastAgentHit == 0)
                 {
                     Debug.Log("t1 hits into wall or t2 hit a winner");
                     t2Wins();
                 }
-                // Agent B hits long
                 else
                 {
                     Debug.Log("t2 hits long");
@@ -120,7 +121,7 @@ public class HitWall : MonoBehaviour
             {
                 // t2 hits into wall or t1 hit a winner
                 //if (lastAgentHit == 1 || lastFloorHit == FloorHit.FloorBHit)
-                if (lastAgentHit == 1 )
+                if (lastAgentHit == 1)
                 {
                     Debug.Log("t2 hits into wall or t1 hit a winner");
                     t1Wins();
@@ -135,42 +136,11 @@ public class HitWall : MonoBehaviour
             else if (collision.gameObject.name == "floorA")
             {
                 t2Wins();
-                //// t1 hits into floor, double bounce or service
-                ////if (lastAgentHit == 0 || lastFloorHit == FloorHit.FloorAHit || lastFloorHit == FloorHit.Service)
-                //if (lastAgentHit == 0 )
-                //{
-                //    Debug.Log("t1 hits into floor, double bounce or service");
-                //    t2Wins();
-                //}
-                //else
-                //{
-                //    lastFloorHit = FloorHit.FloorAHit;
-                //    ////successful serve
-                //    //if (!net)
-                //    //{
-                //    //    net = true;
-                //    //}
-                //}
+
             }
             else if (collision.gameObject.name == "floorB")
             {
                 t1Wins();
-                //// t2 hits into floor, double bounce or service
-                ////if (lastAgentHit == 1 || lastFloorHit == FloorHit.FloorBHit || lastFloorHit == FloorHit.Service)
-                //if (lastAgentHit == 1 )
-                //{
-                //    Debug.Log("t2 hits into floor, double bounce or service");
-                //    t1Wins();
-                //}
-                //else
-                //{
-                //    lastFloorHit = FloorHit.FloorBHit;
-                //    ////successful serve
-                //    //if (!net)
-                //    //{
-                //    //    net = true;
-                //    //}
-                //}
             }
             //else if (collision.gameObject.name == "net" && !net)
             else if (collision.gameObject.name == "net")
@@ -189,42 +159,49 @@ public class HitWall : MonoBehaviour
         }
         else if (collision.gameObject.name == "t1_AgentA" || collision.gameObject.name == "t1_AgentB" || collision.gameObject.name == "t1ABat" || collision.gameObject.name == "t1BBat")
         {
+            Invoke("ConvertFlag", 0.5f);
             // t1 double hit
-            if (lastAgentHit == 0)
+            if (lastAgentHit == 0 && flag)
             {
                 Debug.Log("t1 double hit");
+                flag = false;
                 t2Wins();
             }
             else
             {
-                ////agent can return serve in the air
-                //if (lastFloorHit != FloorHit.Service && !net)
-                //{
-                //    net = true;
-                //}
-
+                if(lastAgentHit == 1 || lastAgentHit == -1)
+                {
+                    t2_AgentA.AddReward(0.15f);
+                    t2_AgentB.AddReward(0.15f);
+                }
                 lastAgentHit = 0;
-                //lastFloorHit = FloorHit.FloorHitUnset;
             }
         }
-        else if (collision.gameObject.name == "t2_AgentA" || collision.gameObject.name == "t2_AgentB" || collision.gameObject.name == "t2ABat" || collision.gameObject.name == "t2BBat") 
+        else if (collision.gameObject.name == "t2_AgentA" || collision.gameObject.name == "t2_AgentB" || collision.gameObject.name == "t2ABat" || collision.gameObject.name == "t2BBat")
         {
+            Invoke("ConvertFlag", 0.5f);
             // t2 double hit
-            if (lastAgentHit == 1)
+            if (lastAgentHit == 1 && flag)
             {
                 Debug.Log("t2 double hit");
+                flag = false;
                 t1Wins();
             }
             else
             {
-                //if (lastFloorHit != FloorHit.Service && !net)
-                //{
-                //    net = true;
-                //}
-
+                if(lastAgentHit==0 || lastAgentHit == -1)
+                {
+                    t2_AgentA.AddReward(0.15f);
+                    t2_AgentB.AddReward(0.15f);
+                }
                 lastAgentHit = 1;
-                //lastFloorHit = FloorHit.FloorHitUnset;
             }
+
         }
+    }
+
+    void ConvertFlag()
+    {
+        flag = true;
     }
 }

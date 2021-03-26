@@ -27,15 +27,15 @@ public class Area : MonoBehaviour
     public void MatchReset()
     {
         stepPassed = 0;
-        var ballOut = Random.Range(6f, 8f);
-        var flip = Random.Range(0, 2);
+        var ballOut = 8f;
+        var flip = Random.Range(0, 1);
         if (flip == 0)
         {
-            ball.transform.position = new Vector3(-ballOut, 6f, 0f) + transform.position;
+            ball.transform.position = new Vector3(-ballOut, -2f, 1.079f) + transform.position;
         }
         else
         {
-            ball.transform.position = new Vector3(ballOut, 6f, 0f) + transform.position;
+            ball.transform.position = new Vector3(ballOut, -2f, 1.079f) + transform.position;
         }
         Debug.Log("reset ball velocity");
         m_BallRb.velocity = new Vector3(0f, 0f, 0f);
