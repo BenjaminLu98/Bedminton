@@ -28,7 +28,7 @@ public class Area : MonoBehaviour
     {
         stepPassed = 0;
         var ballOut = 8f;
-        var flip = Random.Range(0, 1);
+        var flip = Random.Range(0, 2);
         if (flip == 0)
         {
             ball.transform.position = new Vector3(-ballOut, -2f, 1.079f) + transform.position;

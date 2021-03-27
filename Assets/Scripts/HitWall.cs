@@ -39,23 +39,26 @@ public class HitWall : MonoBehaviour
         t2_AgentB = m_Area.t2_AgentB;
     }
 
+
     void SetEndurancePanelty()
     {
         t1_AgentA.AddReward(-(100 - t1_AgentA.m_endurance) * TimePaneltyRate);
         t1_AgentB.AddReward(-(100 - t1_AgentB.m_endurance) * TimePaneltyRate);
         t2_AgentA.AddReward(-(100 - t2_AgentA.m_endurance) * TimePaneltyRate);
         t2_AgentB.AddReward(-(100 - t2_AgentB.m_endurance) * TimePaneltyRate);
-
-        //t1_AgentA.AddReward(-m_Area.stepPassed * TimePaneltyRate);
-        //t1_AgentB.AddReward(-m_Area.stepPassed * TimePaneltyRate);
-        //t2_AgentA.AddReward(-m_Area.stepPassed * TimePaneltyRate);
-        //t2_AgentB.AddReward(-m_Area.stepPassed * TimePaneltyRate);
     }
 
+    void showReward()
+    {
+        Debug.Log(t1_AgentA.name+t1_AgentA.GetCumulativeReward());
+        Debug.Log(t1_AgentB.name+t1_AgentB.GetCumulativeReward());
+        Debug.Log(t2_AgentA.name+t2_AgentA.GetCumulativeReward());
+        Debug.Log(t2_AgentB.name+t2_AgentB.GetCumulativeReward());
+    }
     void Reset()
     {
         flag = false;
-
+        showReward();
         t1_AgentA.EndEpisode();
         t1_AgentB.EndEpisode();
         t2_AgentA.EndEpisode();
@@ -75,7 +78,6 @@ public class HitWall : MonoBehaviour
         t2_AgentB.AddReward(-1);
         t1_AgentA.score += 1;
         t1_AgentB.score += 1;
-
         SetEndurancePanelty();
 
         Reset();
@@ -85,19 +87,16 @@ public class HitWall : MonoBehaviour
     void t2Wins()
     {
         Debug.Log("T2Wins!!");
-        t1_AgentA.SetReward(-1);
-        t1_AgentB.SetReward(-1);
-        t2_AgentA.SetReward(1);
-        t2_AgentB.SetReward(1);
+        t1_AgentA.AddReward(-1);
+        t1_AgentB.AddReward(-1);
+        t2_AgentA.AddReward(1);
+        t2_AgentB.AddReward(1);
         t2_AgentA.score += 1;
         t2_AgentB.score += 1;
-
         SetEndurancePanelty();
 
         Reset();
         m_Area.isEnding = true;
-                t2_AgentA.AddReward(-m_Area.stepPassed * TimePaneltyRate);
-        t2_AgentB.AddReward(-m_Area.stepPassed * TimePaneltyRate);
     }
     private void OnCollisionExit(Collision collision)
     {
@@ -135,11 +134,13 @@ public class HitWall : MonoBehaviour
             }
             else if (collision.gameObject.name == "floorA")
             {
+                Debug.Log("hit floor");
                 t2Wins();
 
             }
             else if (collision.gameObject.name == "floorB")
             {
+                Debug.Log("hit floor");
                 t1Wins();
             }
             //else if (collision.gameObject.name == "net" && !net)
@@ -169,10 +170,15 @@ public class HitWall : MonoBehaviour
             }
             else
             {
-                if(lastAgentHit == 1 || lastAgentHit == -1)
+                if((lastAgentHit == 1 || lastAgentHit == -1)&& (collision.gameObject.name == "t1ABat" || collision.gameObject.name == "t1BBat"))
                 {
-                    t2_AgentA.AddReward(0.15f);
-                    t2_AgentB.AddReward(0.15f);
+                    var agent = collision.gameObject.GetComponentInParent<BedmintonAgent>();
+                    if(agent.hitting)
+                    {
+                        t1_AgentA.AddReward(0.2f);
+                        t1_AgentB.AddReward(0.2f);
+                    }
+                    
                 }
                 lastAgentHit = 0;
             }
@@ -191,8 +197,9 @@ public class HitWall : MonoBehaviour
             {
                 if(lastAgentHit==0 || lastAgentHit == -1)
                 {
-                    t2_AgentA.AddReward(0.15f);
-                    t2_AgentB.AddReward(0.15f);
+
+                    t2_AgentA.AddReward(0.2f);
+                    t2_AgentB.AddReward(0.2f);
                 }
                 lastAgentHit = 1;
             }

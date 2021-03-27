@@ -23,14 +23,14 @@ public class BedmintonAgent : Agent
     public float AgentResetLocalY;
     public float testForce;
     public float BatSpringForce;
-
+    public bool hitting;
 
     Text m_TextComponent;
     Rigidbody m_AgentRb;
     Rigidbody m_BallRb;
     float m_InvertMult;
     EnvironmentParameters m_ResetParams;
-    bool hitting;
+    
     bool jumping;
     Area Area;
     float distToMate;
@@ -119,7 +119,11 @@ public class BedmintonAgent : Agent
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         //防止距离过近
-        AddReward(-0.00025f * (1 - Normalize(distToMate, 2.2f, 17f)));
+        if(distToMate<2.2f)
+        {
+            AddReward(-0.0005f * (1 - Normalize(distToMate, 0f, 2.2f)));
+        }
+        
 
         var discreteActions = actionBuffers.DiscreteActions;
         var Axis = discreteActions[3];
