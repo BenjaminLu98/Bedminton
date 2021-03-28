@@ -35,7 +35,7 @@ public class Area : MonoBehaviour
         }
         else
         {
-            ball.transform.position = new Vector3(ballOut, -2f, 1.079f) + transform.position;
+            ball.transform.position = new Vector3(ballOut, -2f, -1.079f) + transform.position;
         }
         Debug.Log("reset ball velocity");
         m_BallRb.velocity = new Vector3(0f, 0f, 0f);
