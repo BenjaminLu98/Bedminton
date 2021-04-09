@@ -119,9 +119,9 @@ public class BedmintonAgent : Agent
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
         //防止距离过近
-        if(distToMate<2.2f)
+        if(distToMate<2.5f)
         {
-            AddReward(-0.1f * (1 - Normalize(distToMate, 0f, 2.2f)));
+            AddReward(-0.1f * (1 - Normalize(distToMate, 0f, 2.5f)));
         }
         
 

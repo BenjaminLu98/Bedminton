@@ -69,13 +69,12 @@ public class HitWall : MonoBehaviour
     void t1Wins()
     {
         Debug.Log("T1Wins!!");
-        t1_AgentA.AddReward(2f);
-        t1_AgentB.AddReward(2f);
-        t2_AgentA.AddReward(-0.2f);
-        t2_AgentB.AddReward(-0.2f);
+
+
 
         t1_AgentA.score += 1;
         t1_AgentB.score += 1;
+
 
 
         Reset();
@@ -85,10 +84,7 @@ public class HitWall : MonoBehaviour
     void t2Wins()
     {
         Debug.Log("T2Wins!!");
-        t1_AgentA.AddReward(-0.2f);
-        t1_AgentB.AddReward(-0.2f);
-        t2_AgentA.AddReward(2f);
-        t2_AgentB.AddReward(2f);
+
 
         t2_AgentA.score += 1;
         t2_AgentB.score += 1;
@@ -173,8 +169,8 @@ public class HitWall : MonoBehaviour
                 if((lastAgentHit == 1 || lastAgentHit == -1)&& (collision.gameObject.name == "t1ABat" || collision.gameObject.name == "t1BBat"))
                 {
                     var agent = collision.gameObject.GetComponentInParent<BedmintonAgent>();
-                    t1_AgentA.AddReward(0.4f);
-                    t1_AgentB.AddReward(0.4f);     
+                    t1_AgentA.AddReward(0.5f);
+                    t1_AgentB.AddReward(0.5f);     
                 }
                 lastAgentHit = 0;
             }
@@ -196,8 +192,8 @@ public class HitWall : MonoBehaviour
                 if ((lastAgentHit == 0 || lastAgentHit == -1) && (collision.gameObject.name == "t2ABat" || collision.gameObject.name == "t2BBat"))
                 {
 
-                    t2_AgentA.AddReward(0.4f);
-                    t2_AgentB.AddReward(0.4f);
+                    t2_AgentA.AddReward(0.5f);
+                    t2_AgentB.AddReward(0.5f);
                 }
                 lastAgentHit = 1;
 
