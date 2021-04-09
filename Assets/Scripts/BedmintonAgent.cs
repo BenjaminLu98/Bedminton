@@ -155,7 +155,7 @@ public class BedmintonAgent : Agent
         float agentDisToBall = Mathf.Abs(Vector3.Distance(transform.position, ball.transform.position));
         if(agentDisToBall<3f&&agentDisToBall>1.2f)
         {
-            AddReward((1-Normalize(agentDisToBall, 0f, 3f))*0.1f);
+            AddReward((1-Normalize(agentDisToBall, 0f, 3f))*0.01f);
         }
 
 

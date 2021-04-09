@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//过网即加分？
+
 public class HitWall : MonoBehaviour
 {
     public GameObject areaObject;
@@ -168,9 +170,8 @@ public class HitWall : MonoBehaviour
             {
                 if((lastAgentHit == 1 || lastAgentHit == -1)&& (collision.gameObject.name == "t1ABat" || collision.gameObject.name == "t1BBat"))
                 {
-                    var agent = collision.gameObject.GetComponentInParent<BedmintonAgent>();
-                    t1_AgentA.AddReward(0.5f);
-                    t1_AgentB.AddReward(0.5f);     
+                    //t1_AgentA.AddReward(0.5f);
+                    //t1_AgentB.AddReward(0.5f);     
                 }
                 lastAgentHit = 0;
             }
@@ -192,13 +193,28 @@ public class HitWall : MonoBehaviour
                 if ((lastAgentHit == 0 || lastAgentHit == -1) && (collision.gameObject.name == "t2ABat" || collision.gameObject.name == "t2BBat"))
                 {
 
-                    t2_AgentA.AddReward(0.5f);
-                    t2_AgentB.AddReward(0.5f);
+                    //t2_AgentA.AddReward(0.5f);
+                    //t2_AgentB.AddReward(0.5f);
                 }
                 lastAgentHit = 1;
 
             }
 
+        }
+        else if(collision.gameObject.name=="over")
+        {
+            switch(lastAgentHit)
+            {
+                case 0:
+                    t1_AgentA.AddReward(0.5f);
+                    t1_AgentB.AddReward(0.5f);
+                    break;
+                case 1:
+                    t2_AgentA.AddReward(0.5f);
+                    t2_AgentB.AddReward(0.5f);
+                    break;
+
+            }
         }
     }
 
