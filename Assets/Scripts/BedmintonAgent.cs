@@ -121,7 +121,7 @@ public class BedmintonAgent : Agent
         //防止距离过近
         if(distToMate<2.2f)
         {
-            AddReward(-0.0005f * (1 - Normalize(distToMate, 0f, 2.2f)));
+            AddReward(-0.1f * (1 - Normalize(distToMate, 0f, 2.2f)));
         }
         
 

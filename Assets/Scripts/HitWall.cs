@@ -71,8 +71,9 @@ public class HitWall : MonoBehaviour
         Debug.Log("T1Wins!!");
         t1_AgentA.AddReward(2f);
         t1_AgentB.AddReward(2f);
-        t2_AgentA.AddReward(-0.5f);
-        t2_AgentB.AddReward(-0.5f);
+        t2_AgentA.AddReward(-0.2f);
+        t2_AgentB.AddReward(-0.2f);
+
         t1_AgentA.score += 1;
         t1_AgentB.score += 1;
 
@@ -84,10 +85,11 @@ public class HitWall : MonoBehaviour
     void t2Wins()
     {
         Debug.Log("T2Wins!!");
-        t1_AgentA.AddReward(-0.3f);
-        t1_AgentB.AddReward(-0.3f);
-        t2_AgentA.AddReward(2);
-        t2_AgentB.AddReward(2);
+        t1_AgentA.AddReward(-0.2f);
+        t1_AgentB.AddReward(-0.2f);
+        t2_AgentA.AddReward(2f);
+        t2_AgentB.AddReward(2f);
+
         t2_AgentA.score += 1;
         t2_AgentB.score += 1;
 
@@ -101,10 +103,10 @@ public class HitWall : MonoBehaviour
         {
             if (collision.gameObject.name == "wallA" || collision.gameObject.name == "wallC" || collision.gameObject.name == "wallD")
             {
-                // Agent A hits into wall or agent B hit a winner
+                // Agent A hits into wall 
                 if (lastAgentHit == 0)
                 {
-                    Debug.Log("t1 hits into wall or t2 hit a winner");
+                    Debug.Log("t1 hits into wall");
                     t2Wins();
                 }
                 //避免重置后再次和墙相撞
@@ -116,11 +118,9 @@ public class HitWall : MonoBehaviour
             }
             else if (collision.gameObject.name == "wallB" || collision.gameObject.name == "wallE" || collision.gameObject.name == "wallF")
             {
-                // t2 hits into wall or t1 hit a winner
-                //if (lastAgentHit == 1 || lastFloorHit == FloorHit.FloorBHit)
                 if (lastAgentHit == 1)
                 {
-                    Debug.Log("t2 hits into wall or t1 hit a winner");
+                    Debug.Log("t2 hits into wall");
                     t1Wins();
                 }
                 //避免重置后再次和墙相撞
@@ -173,12 +173,8 @@ public class HitWall : MonoBehaviour
                 if((lastAgentHit == 1 || lastAgentHit == -1)&& (collision.gameObject.name == "t1ABat" || collision.gameObject.name == "t1BBat"))
                 {
                     var agent = collision.gameObject.GetComponentInParent<BedmintonAgent>();
-                    if(agent.hitting)
-                    {
-                        t1_AgentA.AddReward(0.4f);
-                        t1_AgentB.AddReward(0.4f);
-                    }
-                    
+                    t1_AgentA.AddReward(0.4f);
+                    t1_AgentB.AddReward(0.4f);     
                 }
                 lastAgentHit = 0;
             }
