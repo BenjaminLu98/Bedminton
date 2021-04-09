@@ -126,6 +126,7 @@ public class HitWall : MonoBehaviour
                 //避免重置后再次和墙相撞
                 else if(lastAgentHit == 0)
                 {
+                    
                     Debug.Log("t1 hits long");
                     t2Wins();
                 }
@@ -156,17 +157,55 @@ public class HitWall : MonoBehaviour
                 }
             }
         }
-        else if (collision.gameObject.name == "t1ABat" || collision.gameObject.name == "t1BBat")
+        else if (collision.gameObject.name == "t1_AgentA" || collision.gameObject.name == "t1_AgentB" || collision.gameObject.name == "t1ABat" || collision.gameObject.name == "t1BBat")
         {
-            t1_AgentA.AddReward(0.2f);
-            t1_AgentB.AddReward(0.2f);
-            lastAgentHit = 0;
+            t2flag = false;
+            Invoke("Convertt1Flag", 0.5f);
+            // t1 double hit
+            if (lastAgentHit == 0 && t1flag)
+            {
+                Debug.Log("t1 double hit");
+
+                t2Wins();
+            }
+            else
+            {
+                if((lastAgentHit == 1 || lastAgentHit == -1)&& (collision.gameObject.name == "t1ABat" || collision.gameObject.name == "t1BBat"))
+                {
+                    var agent = collision.gameObject.GetComponentInParent<BedmintonAgent>();
+                    if(agent.hitting)
+                    {
+                        t1_AgentA.AddReward(0.4f);
+                        t1_AgentB.AddReward(0.4f);
+                    }
+                    
+                }
+                lastAgentHit = 0;
+            }
         }
-        else if (collision.gameObject.name == "t2ABat" || collision.gameObject.name == "t2BBat")
+        else if (collision.gameObject.name == "t2_AgentA" || collision.gameObject.name == "t2_AgentB" || collision.gameObject.name == "t2ABat" || collision.gameObject.name == "t2BBat")
         {
-            t2_AgentA.AddReward(0.2f);
-            t2_AgentB.AddReward(0.2f);
-            lastAgentHit = 1;
+            t1flag = false;
+            Invoke("Convertt2Flag", 0.5f);
+            // t2 double hit
+            if (lastAgentHit == 1 && t2flag)
+            {
+
+                Debug.Log("t2 double hit");
+                
+                t1Wins();
+            }
+            else
+            {
+                if ((lastAgentHit == 0 || lastAgentHit == -1) && (collision.gameObject.name == "t2ABat" || collision.gameObject.name == "t2BBat"))
+                {
+
+                    t2_AgentA.AddReward(0.4f);
+                    t2_AgentB.AddReward(0.4f);
+                }
+                lastAgentHit = 1;
+
+            }
 
         }
     }
