@@ -220,13 +220,13 @@ public class HitWall : MonoBehaviour
             {
                 case 0:
                     Debug.LogWarning("t1AB击球过网奖励");
-                    t1_AgentA.AddReward(1f);
-                    t1_AgentB.AddReward(1f);
+                    t1_AgentA.AddReward(0.5f);
+                    t1_AgentB.AddReward(0.5f);
                     break;
                 case 1:
                     Debug.LogWarning("t2AB击球过网奖励");
-                    t2_AgentA.AddReward(1f);
-                    t2_AgentB.AddReward(1f);
+                    t2_AgentA.AddReward(0.5f);
+                    t2_AgentB.AddReward(0.5f);
                     break;
 
             }
