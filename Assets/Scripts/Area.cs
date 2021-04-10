@@ -7,9 +7,9 @@ public class Area : MonoBehaviour
 {
     public GameObject ball;
     public BedmintonAgent t1_AgentA;
-    public BedmintonAgent t1_AgentB;
+
     public BedmintonAgent t2_AgentA;
-    public BedmintonAgent t2_AgentB;
+
     public bool isEnding;
 
     Rigidbody m_BallRb;

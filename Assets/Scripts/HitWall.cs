@@ -105,16 +105,18 @@ public class HitWall : MonoBehaviour
                 if (lastAgentHit == 0)
                 {
                     Debug.Log("t1 hits into wall");
-                    t2Wins();
                     t1_AgentA.AddReward(-0.05f);
+                    t2Wins();
+                    
 
                 }
                 //避免重置后再次和墙相撞
                 else if (lastAgentHit == 1)
                 {
                     Debug.Log("t2 hits long");
-                    t1Wins();
                     t2_AgentA.AddReward(-0.05f);
+                    t1Wins();
+                    
 
                 }
             }
@@ -123,8 +125,9 @@ public class HitWall : MonoBehaviour
                 if (lastAgentHit == 1)
                 {
                     Debug.Log("t2 hits into wall");
-                    t1Wins();
                     t2_AgentA.AddReward(-0.05f);
+                    t1Wins();
+                    
 
                 }
                 //避免重置后再次和墙相撞
@@ -132,8 +135,9 @@ public class HitWall : MonoBehaviour
                 {
                     
                     Debug.Log("t1 hits long");
+                    t1_AgentA.AddReward(-0.2f);
                     t2Wins();
-                    t1_AgentA.AddReward(-0.05f);
+                    
 
                 }
             }
@@ -178,8 +182,7 @@ public class HitWall : MonoBehaviour
             {
                 if((lastAgentHit == 1 || lastAgentHit == -1)&& (collision.gameObject.name == "t1ABat" ))
                 {
-                    //t1_AgentA.AddReward(0.5f);
-                    //t1_AgentB.AddReward(0.5f);     
+                    t1_AgentA.AddReward(0.2f);   
                 }
                 lastAgentHit = 0;
             }
@@ -201,8 +204,7 @@ public class HitWall : MonoBehaviour
                 if ((lastAgentHit == 0 || lastAgentHit == -1) && (collision.gameObject.name == "t2ABat" ))
                 {
 
-                    //t2_AgentA.AddReward(0.5f);
-                    //t2_AgentB.AddReward(0.5f);
+                    t2_AgentA.AddReward(0.2f);
                 }
                 lastAgentHit = 1;
 
@@ -236,11 +238,19 @@ public class HitWall : MonoBehaviour
 
     void Convertt2Flag()
     {
-        t2flag = true;
+        if(lastAgentHit!=-1)
+        {
+            t2flag = true;
+        }
+       
     }
 
     void Convertt1Flag()
     {
-        t1flag = true;
+
+        if (lastAgentHit != -1)
+        {
+            t1flag = true;
+        }
     }
 }

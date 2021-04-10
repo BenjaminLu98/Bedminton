@@ -72,6 +72,7 @@ public class BedmintonAgent : Agent
         sensor.AddObservation(Normalize(-m_InvertMult*m_BallRb.velocity.x,-50f,50f));
         sensor.AddObservation(Normalize( m_BallRb.velocity.y, -30f, 30f));
         sensor.AddObservation(Normalize(m_InvertMult * m_BallRb.velocity.z, -50f, 50f));
+        sensor.AddObservation(Normalize(Bat.transform.localRotation.x, -0.001f, 0.87f));
 
         sensor.AddObservation(Normalize(m_InvertMult * (transform.position.x - myArea.transform.position.x),0f,12f));
         sensor.AddObservation(Normalize(-(transform.position.y - myArea.transform.position.y),3f,7f));
@@ -117,31 +118,26 @@ public class BedmintonAgent : Agent
             case 1:
                 dirToGo = transform.forward * moveSpeedX;
                 m_endurance -= 0.1f;
-                AddReward(-0.001f);
+
                 break;
             case 2:
                 dirToGo = -transform.forward * moveSpeedX;
                 m_endurance -= 0.1f;
-                AddReward(-0.001f);
+
                 break;
             case 3:
                 dirToGo = transform.right * moveSpeedZ;
                 m_endurance -= 0.1f;
-                AddReward(-0.001f);
+
                 break;
             case 4:
                 dirToGo = -transform.right * moveSpeedZ;
                 m_endurance -= 0.1f;
-                AddReward(-0.001f);
+
                 break;
         }
         float agentDisToBall = Mathf.Abs(Vector3.Distance(transform.position, ball.transform.position));
-        if(agentDisToBall<3f&&agentDisToBall>1.2f)
-        {
-            float reward = (1 - Normalize(agentDisToBall, 0f, 3f)) * 0.03f;
-            AddReward(reward);
-            Debug.LogWarning(gameObject.name+"球距离奖励"+reward);
-        }
+
 
 
         
@@ -190,7 +186,7 @@ public class BedmintonAgent : Agent
             spring.damper = 50f;
             BatJoint.spring = spring;
 
-            AddReward(-0.005f);
+
         }
         else if (RotateBat == -1)
         {
@@ -205,7 +201,7 @@ public class BedmintonAgent : Agent
 
         if(RotToGo!=Vector3.zero)
         {
-            AddReward(-0.001f);
+
         }
         transform.Rotate(RotToGo, Time.deltaTime * 100f);
 
@@ -221,7 +217,7 @@ public class BedmintonAgent : Agent
 
             //如果改了这个jump力，那么需要改观测值上下限！
             m_AgentRb.AddForce(new Vector3(0f,4f,0f), ForceMode.VelocityChange);
-            AddReward(-0.005f);
+
         }
         m_AgentRb.AddForce(new Vector3(dirToGo.x, 0f , dirToGo.z), ForceMode.VelocityChange);
 
