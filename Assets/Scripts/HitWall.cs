@@ -201,15 +201,22 @@ public class HitWall : MonoBehaviour
             }
 
         }
-        else if(collision.gameObject.name=="over")
+
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.name == "over")
         {
-            switch(lastAgentHit)
+            switch (lastAgentHit)
             {
                 case 0:
+                    Debug.LogWarning("t1AB击球过网奖励");
                     t1_AgentA.AddReward(0.5f);
                     t1_AgentB.AddReward(0.5f);
                     break;
                 case 1:
+                    Debug.LogWarning("t2AB击球过网奖励");
                     t2_AgentA.AddReward(0.5f);
                     t2_AgentB.AddReward(0.5f);
                     break;
@@ -217,6 +224,7 @@ public class HitWall : MonoBehaviour
             }
         }
     }
+
 
     void Convertt2Flag()
     {

@@ -121,7 +121,9 @@ public class BedmintonAgent : Agent
         //防止距离过近
         if(distToMate<2.5f)
         {
-            AddReward(-0.1f * (1 - Normalize(distToMate, 0f, 2.5f)));
+            float punnish = -0.1f * (1 - Normalize(distToMate, 0f, 2.5f));
+            AddReward(punnish);
+            Debug.LogWarning(gameObject.name+"同伴距离惩罚" + punnish);
         }
         
 
@@ -155,7 +157,9 @@ public class BedmintonAgent : Agent
         float agentDisToBall = Mathf.Abs(Vector3.Distance(transform.position, ball.transform.position));
         if(agentDisToBall<3f&&agentDisToBall>1.2f)
         {
-            AddReward((1-Normalize(agentDisToBall, 0f, 3f))*0.01f);
+            float reward = (1 - Normalize(agentDisToBall, 0f, 3f)) * 0.01f;
+            AddReward(reward);
+            Debug.LogWarning(gameObject.name+"球距离奖励"+reward);
         }
 
 
