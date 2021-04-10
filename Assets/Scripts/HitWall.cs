@@ -106,12 +106,16 @@ public class HitWall : MonoBehaviour
                 {
                     Debug.Log("t1 hits into wall");
                     t2Wins();
+                    t1_AgentA.AddReward(-0.05f);
+                    t1_AgentB.AddReward(-0.05f);
                 }
                 //避免重置后再次和墙相撞
                 else if (lastAgentHit == 1)
                 {
                     Debug.Log("t2 hits long");
                     t1Wins();
+                    t2_AgentA.AddReward(-0.05f);
+                    t2_AgentB.AddReward(-0.05f);
                 }
             }
             else if (collision.gameObject.name == "wallB" || collision.gameObject.name == "wallE" || collision.gameObject.name == "wallF")
@@ -120,6 +124,8 @@ public class HitWall : MonoBehaviour
                 {
                     Debug.Log("t2 hits into wall");
                     t1Wins();
+                    t2_AgentA.AddReward(-0.05f);
+                    t2_AgentB.AddReward(-0.05f);
                 }
                 //避免重置后再次和墙相撞
                 else if(lastAgentHit == 0)
@@ -127,6 +133,8 @@ public class HitWall : MonoBehaviour
                     
                     Debug.Log("t1 hits long");
                     t2Wins();
+                    t1_AgentA.AddReward(-0.05f);
+                    t1_AgentB.AddReward(-0.05f);
                 }
             }
             else if (collision.gameObject.name == "floorA")
