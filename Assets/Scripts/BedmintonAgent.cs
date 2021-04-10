@@ -80,35 +80,24 @@ public class BedmintonAgent : Agent
         sensor.AddObservation(Normalize(m_AgentRb.velocity.y, -4f, 4f));
         sensor.AddObservation(Normalize(m_InvertMult * m_AgentRb.velocity.z, -50f, 50f));
 
-        Agent[,] agents=new Agent[2,2]{{Area.t1_AgentA,Area.t1_AgentB},{Area.t2_AgentA,Area.t2_AgentB}};
+        Agent[] agents=new Agent[2]{Area.t1_AgentA,Area.t2_AgentA};
         int m_teamNo=invertX?0:1;
-        for(int i=0;i<2;i++)
-        { 
-            var agent=agents[m_teamNo,i];           
-            if(agent!=this)
-            {
-                Rigidbody a_RB=agent.GetComponent<Rigidbody>();
-                sensor.AddObservation(Normalize(m_InvertMult * (agent.transform.position.x - myArea.transform.position.x), 0f, 12f));
-                sensor.AddObservation(Normalize(-(agent.transform.position.y - myArea.transform.position.y), 3f, 7f));
-                sensor.AddObservation(Normalize(m_InvertMult * (agent.transform.position.z - myArea.transform.position.z), -5f, 5f));
-                sensor.AddObservation(Normalize(-m_InvertMult * a_RB.velocity.x, -50f, 50f));
-                sensor.AddObservation(Normalize(a_RB.velocity.y, -4f, 4f));
-                sensor.AddObservation(Normalize(m_InvertMult * a_RB.velocity.z, -50f, 50f));
-                distToMate = Mathf.Abs(Vector3.Distance(agent.transform.position, transform.position));
-                sensor.AddObservation(Normalize(distToMate,2.2f,17f));
-            }
-        }
+        
         for(int i=0;i<2;i++)
         {
-            var agent=agents[1-m_teamNo,i];
-            var o_InvertMult = -m_InvertMult;
-            Rigidbody a_RB=agent.GetComponent<Rigidbody>();
-            sensor.AddObservation(Normalize(o_InvertMult * (agent.transform.position.x - myArea.transform.position.x), 0f, 12f));
-            sensor.AddObservation(Normalize(-(agent.transform.position.y - myArea.transform.position.y), 3f, 7f));
-            sensor.AddObservation(Normalize(o_InvertMult * (agent.transform.position.z - myArea.transform.position.z), -5f, 5f));
-            sensor.AddObservation(Normalize(-o_InvertMult * a_RB.velocity.x, -50f, 50f));
-            sensor.AddObservation(Normalize(a_RB.velocity.y, -4f, 4f));
-            sensor.AddObservation(Normalize(o_InvertMult * a_RB.velocity.z, -50f, 50f));
+            var agent=agents[i];
+            if(agent!=this)
+            {
+                var o_InvertMult = -m_InvertMult;
+                Rigidbody a_RB = agent.GetComponent<Rigidbody>();
+                sensor.AddObservation(Normalize(o_InvertMult * (agent.transform.position.x - myArea.transform.position.x), 0f, 12f));
+                sensor.AddObservation(Normalize(-(agent.transform.position.y - myArea.transform.position.y), 3f, 7f));
+                sensor.AddObservation(Normalize(o_InvertMult * (agent.transform.position.z - myArea.transform.position.z), -5f, 5f));
+                sensor.AddObservation(Normalize(-o_InvertMult * a_RB.velocity.x, -50f, 50f));
+                sensor.AddObservation(Normalize(a_RB.velocity.y, -4f, 4f));
+                sensor.AddObservation(Normalize(o_InvertMult * a_RB.velocity.z, -50f, 50f));
+            }
+            
         }
             
        
@@ -118,14 +107,6 @@ public class BedmintonAgent : Agent
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
-        //防止距离过近
-        if(distToMate<2.5f)
-        {
-            float punnish = -0.1f * (1 - Normalize(distToMate, 0f, 2.5f));
-            AddReward(punnish);
-            Debug.LogWarning(gameObject.name+"同伴距离惩罚" + punnish);
-        }
-        
 
         var discreteActions = actionBuffers.DiscreteActions;
         var Axis = discreteActions[3];
@@ -312,11 +293,11 @@ public class BedmintonAgent : Agent
         
         m_endurance =100f;
         // transform.position = new Vector3(-m_InvertMult * Random.Range(6f, 8f), -1.5f, -1.8f) + transform.parent.transform.position;
-        if (id==1)
+        if (id==2)
         {
             transform.position = new Vector3(m_InvertMult * 3f, AgentResetLocalY, 0f) + transform.parent.transform.position;
         }
-        if(id==2)
+        if(id==1)
         {
             transform.position = new Vector3(m_InvertMult * 7f, AgentResetLocalY, 0f) + transform.parent.transform.position;
         }

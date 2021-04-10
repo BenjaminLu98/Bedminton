@@ -26,9 +26,9 @@ public class HitWall : MonoBehaviour
 
     Area m_Area;
     BedmintonAgent t1_AgentA;
-    BedmintonAgent t1_AgentB;
+
     BedmintonAgent t2_AgentA;
-    BedmintonAgent t2_AgentB;
+
 
     //  Use this for initialization
     void Start()
@@ -37,10 +37,10 @@ public class HitWall : MonoBehaviour
         t2flag = false;
         m_Area = areaObject.GetComponent<Area>();
         t1_AgentA = m_Area.t1_AgentA;
-        t1_AgentB = m_Area.t1_AgentB;
+
 
         t2_AgentA = m_Area.t2_AgentA;
-        t2_AgentB = m_Area.t2_AgentB;
+
     }
 
 
@@ -49,9 +49,9 @@ public class HitWall : MonoBehaviour
     void showReward()
     {
         Debug.Log(t1_AgentA.name+t1_AgentA.GetCumulativeReward());
-        Debug.Log(t1_AgentB.name+t1_AgentB.GetCumulativeReward());
+
         Debug.Log(t2_AgentA.name+t2_AgentA.GetCumulativeReward());
-        Debug.Log(t2_AgentB.name+t2_AgentB.GetCumulativeReward());
+
     }
     void Reset()
     {
@@ -59,9 +59,9 @@ public class HitWall : MonoBehaviour
         t2flag = false;
         showReward();
         t1_AgentA.EndEpisode();
-        t1_AgentB.EndEpisode();
+
         t2_AgentA.EndEpisode();
-        t2_AgentB.EndEpisode();
+
 
         m_Area.MatchReset();
         lastAgentHit = -1;
@@ -75,7 +75,7 @@ public class HitWall : MonoBehaviour
 
 
         t1_AgentA.score += 1;
-        t1_AgentB.score += 1;
+
 
 
 
@@ -89,7 +89,7 @@ public class HitWall : MonoBehaviour
 
 
         t2_AgentA.score += 1;
-        t2_AgentB.score += 1;
+
 
 
         Reset();
@@ -107,7 +107,7 @@ public class HitWall : MonoBehaviour
                     Debug.Log("t1 hits into wall");
                     t2Wins();
                     t1_AgentA.AddReward(-0.05f);
-                    t1_AgentB.AddReward(-0.05f);
+
                 }
                 //避免重置后再次和墙相撞
                 else if (lastAgentHit == 1)
@@ -115,7 +115,7 @@ public class HitWall : MonoBehaviour
                     Debug.Log("t2 hits long");
                     t1Wins();
                     t2_AgentA.AddReward(-0.05f);
-                    t2_AgentB.AddReward(-0.05f);
+
                 }
             }
             else if (collision.gameObject.name == "wallB" || collision.gameObject.name == "wallE" || collision.gameObject.name == "wallF")
@@ -125,7 +125,7 @@ public class HitWall : MonoBehaviour
                     Debug.Log("t2 hits into wall");
                     t1Wins();
                     t2_AgentA.AddReward(-0.05f);
-                    t2_AgentB.AddReward(-0.05f);
+
                 }
                 //避免重置后再次和墙相撞
                 else if(lastAgentHit == 0)
@@ -134,7 +134,7 @@ public class HitWall : MonoBehaviour
                     Debug.Log("t1 hits long");
                     t2Wins();
                     t1_AgentA.AddReward(-0.05f);
-                    t1_AgentB.AddReward(-0.05f);
+
                 }
             }
             else if (collision.gameObject.name == "floorA")
@@ -163,7 +163,7 @@ public class HitWall : MonoBehaviour
                 }
             }
         }
-        else if (collision.gameObject.name == "t1_AgentA" || collision.gameObject.name == "t1_AgentB" || collision.gameObject.name == "t1ABat" || collision.gameObject.name == "t1BBat")
+        else if (collision.gameObject.name == "t1_AgentA" || collision.gameObject.name == "t1ABat" )
         {
             t2flag = false;
             Invoke("Convertt1Flag", 0.5f);
@@ -176,7 +176,7 @@ public class HitWall : MonoBehaviour
             }
             else
             {
-                if((lastAgentHit == 1 || lastAgentHit == -1)&& (collision.gameObject.name == "t1ABat" || collision.gameObject.name == "t1BBat"))
+                if((lastAgentHit == 1 || lastAgentHit == -1)&& (collision.gameObject.name == "t1ABat" ))
                 {
                     //t1_AgentA.AddReward(0.5f);
                     //t1_AgentB.AddReward(0.5f);     
@@ -184,7 +184,7 @@ public class HitWall : MonoBehaviour
                 lastAgentHit = 0;
             }
         }
-        else if (collision.gameObject.name == "t2_AgentA" || collision.gameObject.name == "t2_AgentB" || collision.gameObject.name == "t2ABat" || collision.gameObject.name == "t2BBat")
+        else if (collision.gameObject.name == "t2_AgentA" || collision.gameObject.name == "t2ABat" )
         {
             t1flag = false;
             Invoke("Convertt2Flag", 0.5f);
@@ -198,7 +198,7 @@ public class HitWall : MonoBehaviour
             }
             else
             {
-                if ((lastAgentHit == 0 || lastAgentHit == -1) && (collision.gameObject.name == "t2ABat" || collision.gameObject.name == "t2BBat"))
+                if ((lastAgentHit == 0 || lastAgentHit == -1) && (collision.gameObject.name == "t2ABat" ))
                 {
 
                     //t2_AgentA.AddReward(0.5f);
@@ -221,12 +221,12 @@ public class HitWall : MonoBehaviour
                 case 0:
                     Debug.LogWarning("t1AB击球过网奖励");
                     t1_AgentA.AddReward(0.5f);
-                    t1_AgentB.AddReward(0.5f);
+
                     break;
                 case 1:
                     Debug.LogWarning("t2AB击球过网奖励");
                     t2_AgentA.AddReward(0.5f);
-                    t2_AgentB.AddReward(0.5f);
+
                     break;
 
             }
