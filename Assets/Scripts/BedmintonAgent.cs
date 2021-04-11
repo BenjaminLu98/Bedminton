@@ -67,22 +67,40 @@ public class BedmintonAgent : Agent
     public override void CollectObservations(VectorSensor sensor)
     {
         //球相对人的参数，前向、右向为正
-        sensor.AddObservation(Normalize(-m_InvertMult*(ball.transform.position.x - myArea.transform.position.x), -12f, 12f));
-        sensor.AddObservation(Normalize(ball.transform.position.y - myArea.transform.position.y,-1.039f , 15.3f));
-        sensor.AddObservation(Normalize(m_InvertMult * (ball.transform.position.z - myArea.transform.position.z),-5.5f, 5.5f));
-        sensor.AddObservation(Normalize(-m_InvertMult*m_BallRb.velocity.x,-50f,50f));
-        sensor.AddObservation(Normalize( m_BallRb.velocity.y, -30f, 30f));
-        sensor.AddObservation(Normalize(m_InvertMult * m_BallRb.velocity.z, -50f, 50f));
+        sensor.AddObservation(m_InvertMult*(ball.transform.position.x - myArea.transform.position.x));
+        sensor.AddObservation(ball.transform.position.y - myArea.transform.position.y);
+        sensor.AddObservation(m_InvertMult * (ball.transform.position.z - myArea.transform.position.z));
+        sensor.AddObservation(-m_InvertMult*m_BallRb.velocity.x);
+        sensor.AddObservation( m_BallRb.velocity.y);
+        sensor.AddObservation(m_InvertMult * m_BallRb.velocity.z);
 
-        sensor.AddObservation(Normalize(Bat.transform.localRotation.x, -0.001f, 0.87f));
+        sensor.AddObservation(Bat.transform.localRotation.x);
 
-        sensor.AddObservation(Normalize(m_InvertMult * (transform.position.x - myArea.transform.position.x),0f,12f));
-        sensor.AddObservation(Normalize(-(transform.position.y - myArea.transform.position.y),3f,7f));
-        sensor.AddObservation(Normalize(m_InvertMult * (transform.position.z-myArea.transform.position.z), -5.5f, 5.5f));
-        sensor.AddObservation(Normalize(-m_InvertMult * m_AgentRb.velocity.x, -50f, 50f));
-        sensor.AddObservation(Normalize(m_AgentRb.velocity.y, -4f, 4f));
-        sensor.AddObservation(Normalize(m_InvertMult * m_AgentRb.velocity.z, -50f, 50f));
-        
+        sensor.AddObservation(m_InvertMult * (transform.position.x - myArea.transform.position.x));
+        sensor.AddObservation(transform.position.y - myArea.transform.position.y);
+        sensor.AddObservation(m_InvertMult * (transform.position.z-myArea.transform.position.z));
+        sensor.AddObservation(-m_InvertMult * m_AgentRb.velocity.x);
+        sensor.AddObservation(m_AgentRb.velocity.y);
+        sensor.AddObservation(m_InvertMult * m_AgentRb.velocity.z);
+
+        var m_localEularY = transform.localEulerAngles.y;
+        if (invertX)
+        {
+            sensor.AddObservation(m_localEularY);
+            
+        }
+        else
+        {
+            if(m_localEularY > 180f)
+            {
+                sensor.AddObservation(m_localEularY-180f);
+            }
+            else
+            {
+                sensor.AddObservation(m_localEularY+180f);
+            }
+        }
+
         Agent[] agents=new Agent[2]{Area.t1_AgentA,Area.t2_AgentA};
         int m_teamNo=invertX?0:1;
         
@@ -91,14 +109,32 @@ public class BedmintonAgent : Agent
             var agent=agents[i];
             if(agent!=this)
             {
-                var o_InvertMult = -m_InvertMult;
+
                 Rigidbody a_RB = agent.GetComponent<Rigidbody>();
-                sensor.AddObservation(Normalize(o_InvertMult * (agent.transform.position.x - myArea.transform.position.x), 0f, 12f));
-                sensor.AddObservation(Normalize(-(agent.transform.position.y - myArea.transform.position.y), 3f, 7f));
-                sensor.AddObservation(Normalize(o_InvertMult * (agent.transform.position.z - myArea.transform.position.z), -5.5f, 5.5f));
-                sensor.AddObservation(Normalize(-o_InvertMult * a_RB.velocity.x, -50f, 50f));
-                sensor.AddObservation(Normalize(a_RB.velocity.y, -4f, 4f));
-                sensor.AddObservation(Normalize(o_InvertMult * a_RB.velocity.z, -50f, 50f));
+                sensor.AddObservation(m_InvertMult * (agent.transform.position.x - myArea.transform.position.x));
+                sensor.AddObservation(agent.transform.position.y - myArea.transform.position.y);
+                sensor.AddObservation(m_InvertMult * (agent.transform.position.z - myArea.transform.position.z));
+                sensor.AddObservation(-m_InvertMult * a_RB.velocity.x);
+                sensor.AddObservation(a_RB.velocity.y);
+                sensor.AddObservation(m_InvertMult * a_RB.velocity.z);
+
+                var a_localEularY= a_RB.transform.localEulerAngles.y;
+                if (!invertX)
+                {
+                    sensor.AddObservation(a_localEularY);
+                }
+                else
+                {
+                    if (a_localEularY > 180f)
+                    {
+                        sensor.AddObservation(a_localEularY - 180f);
+                    }
+                    else
+                    {
+                        sensor.AddObservation(a_localEularY + 180f);
+                    }
+                }
+
             }
             
         }
@@ -234,6 +270,14 @@ public class BedmintonAgent : Agent
                 transform.position.z);
         }
 
+    }
+
+    public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
+    {
+        if(jumping)
+        {
+            actionMask.WriteMask(0, new int[1] { 1 });
+        }
     }
 
     public override void Heuristic(in ActionBuffers actionsOut)

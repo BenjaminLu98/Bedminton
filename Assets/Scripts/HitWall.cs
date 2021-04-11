@@ -114,7 +114,7 @@ public class HitWall : MonoBehaviour
                 else if (lastAgentHit == 1)
                 {
                     Debug.Log("t2 hits long");
-                    t2_AgentA.AddReward(-0.2f);
+                    t2_AgentA.AddReward(-0.4f);
                     t1Wins();
                     
 
@@ -135,7 +135,7 @@ public class HitWall : MonoBehaviour
                 {
                     
                     Debug.Log("t1 hits long");
-                    t1_AgentA.AddReward(-0.2f);
+                    t1_AgentA.AddReward(-0.4f);
                     t2Wins();
                     
 
