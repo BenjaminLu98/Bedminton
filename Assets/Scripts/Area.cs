@@ -32,11 +32,11 @@ public class Area : MonoBehaviour
         var flip = Random.Range(0, 2);
         if (flip == 0)
         {
-            ball.transform.position = new Vector3(-ballOut + noise * 4, -2f, 1.079f) + transform.position;
+            ball.transform.position = new Vector3(-ballOut + noise * 6, -1.5f, 1.079f) + transform.position;
         }
         else
         {
-            ball.transform.position = new Vector3(ballOut + noise * 4, -2f, -1.079f) + transform.position;
+            ball.transform.position = new Vector3(ballOut + noise * 6, -1.5f, -1.079f) + transform.position;
         }
         Debug.Log("reset ball velocity");
         m_BallRb.velocity = new Vector3(0f, 0f, 0f);
