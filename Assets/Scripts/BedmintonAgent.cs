@@ -101,10 +101,10 @@ public class BedmintonAgent : Agent
             }
         }
 
-        Agent[] agents=new Agent[2]{Area.t1_AgentA,Area.t2_AgentA};
+        Agent[] agents=new Agent[4]{Area.t1_AgentA, Area.t1_AgentB, Area.t2_AgentA, Area.t2_AgentB };
         int m_teamNo=invertX?0:1;
         
-        for(int i=0;i<2;i++)
+        for(int i=0;i<4;i++)
         {
             var agent=agents[i];
             if(agent!=this)
@@ -261,7 +261,7 @@ public class BedmintonAgent : Agent
 
 
         
-        //防止越界!!!!!!!??????
+        //防止越界
         if (invertX && transform.position.x - transform.parent.transform.position.x > m_InvertMult ||
             !invertX && transform.position.x - transform.parent.transform.position.x < m_InvertMult)
         {

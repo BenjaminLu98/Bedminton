@@ -26,8 +26,9 @@ public class HitWall : MonoBehaviour
 
     Area m_Area;
     BedmintonAgent t1_AgentA;
-
+    BedmintonAgent t1_AgentB;
     BedmintonAgent t2_AgentA;
+    BedmintonAgent t2_AgentB;
 
 
     //  Use this for initialization
@@ -37,10 +38,11 @@ public class HitWall : MonoBehaviour
         t2flag = false;
         m_Area = areaObject.GetComponent<Area>();
         t1_AgentA = m_Area.t1_AgentA;
+        t1_AgentB = m_Area.t1_AgentB;
 
 
         t2_AgentA = m_Area.t2_AgentA;
-
+        t2_AgentB = m_Area.t2_AgentB;
     }
 
 
@@ -59,8 +61,9 @@ public class HitWall : MonoBehaviour
         t2flag = false;
         showReward();
         t1_AgentA.EndEpisode();
-
+        t1_AgentB.EndEpisode();
         t2_AgentA.EndEpisode();
+        t2_AgentB.EndEpisode();
 
 
         m_Area.MatchReset();
