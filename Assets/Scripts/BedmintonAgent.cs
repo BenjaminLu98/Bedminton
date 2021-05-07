@@ -184,7 +184,7 @@ public class BedmintonAgent : Agent
         if (distToMate < 2.2f)
         {
             AddReward(-0.07f * (1 - Normalize(distToMate, 0f, 2.2f)));
-            Debug.LogError(this.name + "Too Close!");
+            Debug.Log(this.name + "Too Close!");
         }
 
         var discreteActions = actionBuffers.DiscreteActions;

@@ -4,8 +4,20 @@ using UnityEngine;
 
 
 
+
 public class HitWall : MonoBehaviour
 {
+    //发球击中或者接到发球
+    public float HIT_REWARD = 0.2f;
+    //击球过网奖励
+    public float OVER_REWARD = 0.5f;
+    //击球后球命中我方边界
+    public float HIT_MY_BOUND_PUNISH = -0.2f;
+    //击球后在对方场上越界
+    public float HIT_OP_BOUND_PUNISH = -0.4f;
+    //双重击球 
+    public float DOUBLEHIT_PUNISH = 0f;
+
     public GameObject areaObject;
     public int lastAgentHit;
     public bool net;
@@ -106,8 +118,8 @@ public class HitWall : MonoBehaviour
                 if (lastAgentHit == 0)
                 {
                     Debug.Log("t1 hits into wall");
-                    t1_AgentA.AddReward(-0.2f);
-                    t1_AgentB.AddReward(-0.2f);
+                    t1_AgentA.AddReward(HIT_MY_BOUND_PUNISH);
+                    t1_AgentB.AddReward(HIT_MY_BOUND_PUNISH);
                     t2Wins();
                     
                 }
@@ -115,8 +127,8 @@ public class HitWall : MonoBehaviour
                 else if (lastAgentHit == 1)
                 {
                     Debug.Log("t2 hits long");
-                    t2_AgentA.AddReward(-0.4f);
-                    t2_AgentB.AddReward(-0.4f);
+                    t2_AgentA.AddReward(HIT_OP_BOUND_PUNISH);
+                    t2_AgentB.AddReward(HIT_OP_BOUND_PUNISH);
                     t1Wins();
                     
                 }
@@ -126,8 +138,8 @@ public class HitWall : MonoBehaviour
                 if (lastAgentHit == 1)
                 {
                     Debug.Log("t2 hits into wall");
-                    t2_AgentA.AddReward(-0.2f);
-                    t2_AgentB.AddReward(-0.2f);
+                    t2_AgentA.AddReward(HIT_MY_BOUND_PUNISH);
+                    t2_AgentB.AddReward(HIT_MY_BOUND_PUNISH);
                     t1Wins();
                     
 
@@ -137,8 +149,8 @@ public class HitWall : MonoBehaviour
                 {
                     
                     Debug.Log("t1 hits long");
-                    t1_AgentA.AddReward(-0.4f);
-                    t1_AgentB.AddReward(-0.4f);
+                    t1_AgentA.AddReward(HIT_OP_BOUND_PUNISH);
+                    t1_AgentB.AddReward(HIT_OP_BOUND_PUNISH);
                     t2Wins();
                     
 
@@ -186,8 +198,8 @@ public class HitWall : MonoBehaviour
                 //t2最后击球或t1发球时，t1球拍碰到球
                 if((lastAgentHit == 1 || lastAgentHit == -1)&& (collision.gameObject.name == "t1ABat"|| collision.gameObject.name == "t1BBat"))
                 {
-                    t1_AgentA.AddReward(0.3f);
-                    t1_AgentB.AddReward(0.3f);
+                    t1_AgentA.AddReward(HIT_REWARD);
+                    t1_AgentB.AddReward(HIT_REWARD);
                 }
                 lastAgentHit = 0;
             }
@@ -210,8 +222,8 @@ public class HitWall : MonoBehaviour
                 if ((lastAgentHit == 0 || lastAgentHit == -1) && (collision.gameObject.name == "t2ABat"|| collision.gameObject.name == "t2BBat"))
                 {
 
-                    t2_AgentA.AddReward(0.3f);
-                    t2_AgentB.AddReward(0.3f);
+                    t2_AgentA.AddReward(HIT_REWARD);
+                    t2_AgentB.AddReward(HIT_REWARD);
                 }
                 lastAgentHit = 1;
 
@@ -229,14 +241,14 @@ public class HitWall : MonoBehaviour
             {
                 case 0:
                     Debug.LogWarning("t1AB击球过网奖励");
-                    t1_AgentA.AddReward(0.5f);
-                    t1_AgentB.AddReward(0.5f);
+                    t1_AgentA.AddReward(OVER_REWARD);
+                    t1_AgentB.AddReward(OVER_REWARD);
 
                     break;
                 case 1:
                     Debug.LogWarning("t2AB击球过网奖励");
-                    t2_AgentA.AddReward(0.5f);
-                    t2_AgentB.AddReward(0.5f);
+                    t2_AgentA.AddReward(OVER_REWARD);
+                    t2_AgentB.AddReward(OVER_REWARD);
 
                     break;
 
