@@ -109,7 +109,7 @@ public class BedmintonAgent : Agent
             var agent=agents[i];
             if(agent!=this)
             {
-
+                distToMate = Mathf.Abs(Vector3.Distance(agent.transform.position, transform.position));
                 Rigidbody a_RB = agent.GetComponent<Rigidbody>();
                 sensor.AddObservation(m_InvertMult * (agent.transform.position.x - myArea.transform.position.x));
                 sensor.AddObservation(agent.transform.position.y - myArea.transform.position.y);
@@ -146,6 +146,13 @@ public class BedmintonAgent : Agent
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
+
+        //防止距离过近
+        if (distToMate < 2.2f)
+        {
+            AddReward(-0.1f * (1 - Normalize(distToMate, 0f, 2.2f)));
+            Debug.LogError(this.name + "Too Close!");
+        }
 
         var discreteActions = actionBuffers.DiscreteActions;
         var Axis = discreteActions[3];

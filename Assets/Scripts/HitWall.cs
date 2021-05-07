@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-//过网即加分？
+
 
 public class HitWall : MonoBehaviour
 {
@@ -107,7 +107,7 @@ public class HitWall : MonoBehaviour
                 {
                     Debug.Log("t1 hits into wall");
                     t1_AgentA.AddReward(-0.2f);
-                    t2_AgentB.AddReward(-0.2f);
+                    t1_AgentB.AddReward(-0.2f);
                     t2Wins();
                     
                 }
@@ -170,7 +170,7 @@ public class HitWall : MonoBehaviour
                 }
             }
         }
-        else if (collision.gameObject.name == "t1_AgentA" || collision.gameObject.name == "t1ABat" )
+        else if (collision.gameObject.name == "t1_AgentA" || collision.gameObject.name == "t1ABat"|| collision.gameObject.name == "t1_AgentB" || collision.gameObject.name == "t1BBat")
         {
             t2flag = false;
             Invoke("Convertt1Flag", 0.5f);
@@ -183,7 +183,8 @@ public class HitWall : MonoBehaviour
             }
             else
             {
-                if((lastAgentHit == 1 || lastAgentHit == -1)&& (collision.gameObject.name == "t1ABat" ))
+                //t2最后击球或t1发球时，t1球拍碰到球
+                if((lastAgentHit == 1 || lastAgentHit == -1)&& (collision.gameObject.name == "t1ABat"|| collision.gameObject.name == "t1BBat"))
                 {
                     t1_AgentA.AddReward(0.2f);
                     t1_AgentB.AddReward(0.2f);
@@ -191,7 +192,7 @@ public class HitWall : MonoBehaviour
                 lastAgentHit = 0;
             }
         }
-        else if (collision.gameObject.name == "t2_AgentA" || collision.gameObject.name == "t2ABat" )
+        else if (collision.gameObject.name == "t2_AgentA" || collision.gameObject.name == "t2ABat"|| collision.gameObject.name == "t2_AgentB" || collision.gameObject.name == "t2BBat")
         {
             t1flag = false;
             Invoke("Convertt2Flag", 0.5f);
@@ -205,7 +206,8 @@ public class HitWall : MonoBehaviour
             }
             else
             {
-                if ((lastAgentHit == 0 || lastAgentHit == -1) && (collision.gameObject.name == "t2ABat" ))
+                //t1最后击球或t2发球时，t2球拍碰到球
+                if ((lastAgentHit == 0 || lastAgentHit == -1) && (collision.gameObject.name == "t2ABat"|| collision.gameObject.name == "t2BBat"))
                 {
 
                     t2_AgentA.AddReward(0.2f);
