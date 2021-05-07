@@ -104,11 +104,12 @@ public class BedmintonAgent : Agent
         Agent[] agents=new Agent[4]{Area.t1_AgentA, Area.t1_AgentB, Area.t2_AgentA, Area.t2_AgentB };
         int m_teamNo=invertX?0:1;
         
-        for(int i=0;i<4;i++)
+        for(int i= m_teamNo*2; i< m_teamNo * 2+2; i++)
         {
             var agent=agents[i];
             if(agent!=this)
             {
+                //队友
                 distToMate = Mathf.Abs(Vector3.Distance(agent.transform.position, transform.position));
                 Rigidbody a_RB = agent.GetComponent<Rigidbody>();
                 sensor.AddObservation(m_InvertMult * (agent.transform.position.x - myArea.transform.position.x));
@@ -138,10 +139,42 @@ public class BedmintonAgent : Agent
             }
             
         }
-            
-       
-        
-    }
+
+        var o_teamNo = 1 - m_teamNo;
+        for (int i = o_teamNo * 2; i < o_teamNo * 2 + 2; i++)
+        {
+            var agent = agents[i];
+                     
+            Rigidbody a_RB = agent.GetComponent<Rigidbody>();
+            sensor.AddObservation(m_InvertMult * (agent.transform.position.x - myArea.transform.position.x));
+            sensor.AddObservation(agent.transform.position.y - myArea.transform.position.y);
+            sensor.AddObservation(m_InvertMult * (agent.transform.position.z - myArea.transform.position.z));
+            sensor.AddObservation(-m_InvertMult * a_RB.velocity.x);
+            sensor.AddObservation(a_RB.velocity.y);
+            sensor.AddObservation(m_InvertMult * a_RB.velocity.z);
+
+            var a_localEularY = a_RB.transform.localEulerAngles.y;
+            if (!invertX)
+            {
+                sensor.AddObservation(a_localEularY);
+            }
+            else
+            {
+                if (a_localEularY > 180f)
+                {
+                    sensor.AddObservation(a_localEularY - 180f);
+                }
+                else
+                {
+                    sensor.AddObservation(a_localEularY + 180f);
+                }
+            }
+
+        }
+
+     }
+
+
 
 
     public override void OnActionReceived(ActionBuffers actionBuffers)
@@ -150,7 +183,7 @@ public class BedmintonAgent : Agent
         //防止距离过近
         if (distToMate < 2.2f)
         {
-            AddReward(-0.1f * (1 - Normalize(distToMate, 0f, 2.2f)));
+            AddReward(-0.07f * (1 - Normalize(distToMate, 0f, 2.2f)));
             Debug.LogError(this.name + "Too Close!");
         }
 
