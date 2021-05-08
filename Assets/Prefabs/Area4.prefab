@@ -963,6 +963,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ed8f9bbaa7c69446b366bdd52928e40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  HIT_REWARD: 0.3
+  OVER_REWARD: 0.8
+  HIT_MY_BOUND_PUNISH: -0.2
+  HIT_OP_BOUND_PUNISH: -0.4
+  DOUBLEHIT_PUNISH: -0.1
   areaObject: {fileID: 6660522198004255701}
   lastAgentHit: -1
   net: 0
@@ -1078,6 +1083,17 @@ PrefabInstance:
         type: 3}
       propertyPath: TeamId
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -3186172451312953304, guid: 616d49fb19a13b44e98f1c12232cafad,
+        type: 3}
+      propertyPath: m_Model
+      value: 
+      objectReference: {fileID: 5022602860645237092, guid: e39c7205fffa891479c36a924964982e,
+        type: 3}
+    - target: {fileID: -3186172451312953304, guid: 616d49fb19a13b44e98f1c12232cafad,
+        type: 3}
+      propertyPath: m_BehaviorName
+      value: BedmintonB
       objectReference: {fileID: 0}
     - target: {fileID: 6750486818406095, guid: 616d49fb19a13b44e98f1c12232cafad, type: 3}
       propertyPath: m_IsKinematic
@@ -1245,6 +1261,17 @@ PrefabInstance:
       propertyPath: TeamId
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -3186172451312953304, guid: 616d49fb19a13b44e98f1c12232cafad,
+        type: 3}
+      propertyPath: m_Model
+      value: 
+      objectReference: {fileID: 5022602860645237092, guid: 5241dd8624d15264b8164344b59b9c98,
+        type: 3}
+    - target: {fileID: -3186172451312953304, guid: 616d49fb19a13b44e98f1c12232cafad,
+        type: 3}
+      propertyPath: m_BehaviorName
+      value: BedmintonA
+      objectReference: {fileID: 0}
     - target: {fileID: 6750486818406095, guid: 616d49fb19a13b44e98f1c12232cafad, type: 3}
       propertyPath: m_IsKinematic
       value: 0
@@ -1411,6 +1438,17 @@ PrefabInstance:
       propertyPath: invertX
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -3186172451312953304, guid: 616d49fb19a13b44e98f1c12232cafad,
+        type: 3}
+      propertyPath: m_Model
+      value: 
+      objectReference: {fileID: 5022602860645237092, guid: 5241dd8624d15264b8164344b59b9c98,
+        type: 3}
+    - target: {fileID: -3186172451312953304, guid: 616d49fb19a13b44e98f1c12232cafad,
+        type: 3}
+      propertyPath: m_BehaviorName
+      value: BedmintonA
+      objectReference: {fileID: 0}
     - target: {fileID: 858247275852293908, guid: 616d49fb19a13b44e98f1c12232cafad,
         type: 3}
       propertyPath: m_ConnectedAnchor.x
@@ -1572,6 +1610,17 @@ PrefabInstance:
         type: 3}
       propertyPath: invertX
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -3186172451312953304, guid: 616d49fb19a13b44e98f1c12232cafad,
+        type: 3}
+      propertyPath: m_Model
+      value: 
+      objectReference: {fileID: 5022602860645237092, guid: e39c7205fffa891479c36a924964982e,
+        type: 3}
+    - target: {fileID: -3186172451312953304, guid: 616d49fb19a13b44e98f1c12232cafad,
+        type: 3}
+      propertyPath: m_BehaviorName
+      value: BedmintonB
       objectReference: {fileID: 0}
     - target: {fileID: 858247275852293908, guid: 616d49fb19a13b44e98f1c12232cafad,
         type: 3}
