@@ -171,8 +171,15 @@ public class BedmintonAgent : Agent
             }
 
         }
+        //防止距离过近
+        if (distToMate < 3f)
+        {
+            var dist_punish = -0.07f * (1 - Normalize(distToMate, 0f, 3f));
+            AddReward(dist_punish);
+            Debug.Log(this.name + "Too Close!" + dist_punish);
+        }
 
-     }
+    }
 
 
 
@@ -180,12 +187,7 @@ public class BedmintonAgent : Agent
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
 
-        //防止距离过近
-        if (distToMate < 2.2f)
-        {
-            AddReward(-0.07f * (1 - Normalize(distToMate, 0f, 2.2f)));
-            Debug.Log(this.name + "Too Close!");
-        }
+
 
         var discreteActions = actionBuffers.DiscreteActions;
         var Axis = discreteActions[3];

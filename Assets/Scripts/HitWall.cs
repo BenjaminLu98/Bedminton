@@ -8,15 +8,15 @@ using UnityEngine;
 public class HitWall : MonoBehaviour
 {
     //发球击中或者接到发球
-    public float HIT_REWARD = 0.2f;
+    public float HIT_REWARD = 0.3f;
     //击球过网奖励
-    public float OVER_REWARD = 0.5f;
+    public float OVER_REWARD = 0.8f;
     //击球后球命中我方边界
     public float HIT_MY_BOUND_PUNISH = -0.2f;
     //击球后在对方场上越界
     public float HIT_OP_BOUND_PUNISH = -0.4f;
     //双重击球 
-    public float DOUBLEHIT_PUNISH = 0f;
+    public float DOUBLEHIT_PUNISH = -0.1f;
 
     public GameObject areaObject;
     public int lastAgentHit;
@@ -190,7 +190,8 @@ public class HitWall : MonoBehaviour
             if (lastAgentHit == 0 && t1flag)
             {
                 Debug.Log("t1 double hit");
-
+                t1_AgentA.AddReward(DOUBLEHIT_PUNISH);
+                t1_AgentB.AddReward(DOUBLEHIT_PUNISH);
                 t2Wins();
             }
             else
@@ -213,7 +214,8 @@ public class HitWall : MonoBehaviour
             {
 
                 Debug.Log("t2 double hit");
-                
+                t2_AgentA.AddReward(DOUBLEHIT_PUNISH);
+                t2_AgentB.AddReward(DOUBLEHIT_PUNISH);
                 t1Wins();
             }
             else
