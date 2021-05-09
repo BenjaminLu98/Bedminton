@@ -120,7 +120,7 @@ public class BedmintonAgent : Agent
                 sensor.AddObservation(m_InvertMult * a_RB.velocity.z);
 
                 var a_localEularY= a_RB.transform.localEulerAngles.y;
-                if (!invertX)
+                if (invertX)
                 {
                     sensor.AddObservation(a_localEularY);
                 }
@@ -172,9 +172,9 @@ public class BedmintonAgent : Agent
 
         }
         //防止距离过近
-        if (distToMate < 3f)
+        if (distToMate < 2f)
         {
-            var dist_punish = -0.07f * (1 - Normalize(distToMate, 0f, 3f));
+            var dist_punish = -0.07f * (1 - Normalize(distToMate, 0f, 2f));
             AddReward(dist_punish);
             Debug.Log(this.name + "Too Close!" + dist_punish);
         }

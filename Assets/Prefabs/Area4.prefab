@@ -1086,6 +1086,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -3186172451312953304, guid: 616d49fb19a13b44e98f1c12232cafad,
         type: 3}
+      propertyPath: m_Model
+      value: 
+      objectReference: {fileID: 5022602860645237092, guid: 4826c1dc192189f48887d06470471e40,
+        type: 3}
+    - target: {fileID: -3186172451312953304, guid: 616d49fb19a13b44e98f1c12232cafad,
+        type: 3}
       propertyPath: m_BehaviorName
       value: BedmintonB
       objectReference: {fileID: 0}
@@ -1255,6 +1261,12 @@ PrefabInstance:
       propertyPath: TeamId
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -3186172451312953304, guid: 616d49fb19a13b44e98f1c12232cafad,
+        type: 3}
+      propertyPath: m_Model
+      value: 
+      objectReference: {fileID: 5022602860645237092, guid: 7256724a6301e7247bca53dc34313c06,
+        type: 3}
     - target: {fileID: -3186172451312953304, guid: 616d49fb19a13b44e98f1c12232cafad,
         type: 3}
       propertyPath: m_BehaviorName
@@ -1428,6 +1440,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -3186172451312953304, guid: 616d49fb19a13b44e98f1c12232cafad,
         type: 3}
+      propertyPath: m_Model
+      value: 
+      objectReference: {fileID: 5022602860645237092, guid: 7256724a6301e7247bca53dc34313c06,
+        type: 3}
+    - target: {fileID: -3186172451312953304, guid: 616d49fb19a13b44e98f1c12232cafad,
+        type: 3}
       propertyPath: m_BehaviorName
       value: BedmintonA
       objectReference: {fileID: 0}
@@ -1593,6 +1611,12 @@ PrefabInstance:
       propertyPath: invertX
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -3186172451312953304, guid: 616d49fb19a13b44e98f1c12232cafad,
+        type: 3}
+      propertyPath: m_Model
+      value: 
+      objectReference: {fileID: 5022602860645237092, guid: 4826c1dc192189f48887d06470471e40,
+        type: 3}
     - target: {fileID: -3186172451312953304, guid: 616d49fb19a13b44e98f1c12232cafad,
         type: 3}
       propertyPath: m_BehaviorName
