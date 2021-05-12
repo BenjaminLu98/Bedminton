@@ -7,6 +7,8 @@ using UnityEngine;
 
 public class HitWall : MonoBehaviour
 {
+    //白嫖系数
+    public float BAIPIAO = 0.0f;
     //发球击中或者接到发球
     public float HIT_REWARD = 0.3f;
     //击球过网奖励
@@ -19,6 +21,7 @@ public class HitWall : MonoBehaviour
     public float DOUBLEHIT_PUNISH = -0.1f;
 
     public GameObject areaObject;
+    public int lastTeamHit;
     public int lastAgentHit;
     public bool net;
     public float TimePaneltyRate;
@@ -80,6 +83,7 @@ public class HitWall : MonoBehaviour
 
 
         m_Area.MatchReset();
+        lastTeamHit = -1;
         lastAgentHit = -1;
         //net = false;
     }
@@ -115,45 +119,67 @@ public class HitWall : MonoBehaviour
             if (collision.gameObject.name == "wallA" || collision.gameObject.name == "wallC" || collision.gameObject.name == "wallD")
             {
                 // Agent A hits into wall 
-                if (lastAgentHit == 0)
+                if (lastTeamHit == 0)
                 {
                     Debug.Log("t1 hits into wall");
-                    t1_AgentA.AddReward(HIT_MY_BOUND_PUNISH);
-                    t1_AgentB.AddReward(HIT_MY_BOUND_PUNISH);
+                    if (lastAgentHit == 0)
+                    {
+                        t1_AgentA.AddReward(HIT_MY_BOUND_PUNISH);
+                    }
+                    if (lastAgentHit == 1)
+                    {
+                        t1_AgentB.AddReward(HIT_MY_BOUND_PUNISH);
+                    }
+
                     t2Wins();
-                    
                 }
                 //避免重置后再次和墙相撞
-                else if (lastAgentHit == 1)
+                else if (lastTeamHit == 1)
                 {
                     Debug.Log("t2 hits long");
-                    t2_AgentA.AddReward(HIT_OP_BOUND_PUNISH);
-                    t2_AgentB.AddReward(HIT_OP_BOUND_PUNISH);
+                    if (lastAgentHit == 0)
+                    {
+                        t2_AgentA.AddReward(HIT_OP_BOUND_PUNISH);
+                    }
+                    if (lastAgentHit == 1)
+                    {
+                        t2_AgentB.AddReward(HIT_OP_BOUND_PUNISH);
+                    }
+                    
                     t1Wins();
                     
                 }
             }
             else if (collision.gameObject.name == "wallB" || collision.gameObject.name == "wallE" || collision.gameObject.name == "wallF")
             {
-                if (lastAgentHit == 1)
+                if (lastTeamHit == 1)
                 {
                     Debug.Log("t2 hits into wall");
-                    t2_AgentA.AddReward(HIT_MY_BOUND_PUNISH);
-                    t2_AgentB.AddReward(HIT_MY_BOUND_PUNISH);
-                    t1Wins();
-                    
-
+                    if(lastAgentHit==0)
+                    {
+                        t2_AgentA.AddReward(HIT_MY_BOUND_PUNISH);
+                    }
+                    if(lastAgentHit==1)
+                    {
+                        t2_AgentB.AddReward(HIT_MY_BOUND_PUNISH);
+                    }  
+                    t1Wins();               
                 }
                 //避免重置后再次和墙相撞
-                else if(lastAgentHit == 0)
+                else if(lastTeamHit == 0)
                 {
                     
                     Debug.Log("t1 hits long");
-                    t1_AgentA.AddReward(HIT_OP_BOUND_PUNISH);
-                    t1_AgentB.AddReward(HIT_OP_BOUND_PUNISH);
-                    t2Wins();
-                    
+                    if (lastAgentHit==0)
+                    {
+                        t1_AgentA.AddReward(HIT_OP_BOUND_PUNISH);
+                    }
+                    if( lastAgentHit==1)
+                    {
+                        t1_AgentB.AddReward(HIT_OP_BOUND_PUNISH);
+                    }
 
+                    t2Wins();
                 }
             }
             else if (collision.gameObject.name == "floorA")
@@ -170,12 +196,12 @@ public class HitWall : MonoBehaviour
             //else if (collision.gameObject.name == "net" && !net)
             else if (collision.gameObject.name == "net")
             {
-                if (lastAgentHit == 0)
+                if (lastTeamHit == 0)
                 {
                     Debug.Log("net");
                     t2Wins();
                 }
-                else if (lastAgentHit == 1)
+                else if (lastTeamHit == 1)
                 {
                     Debug.Log("net");
                     t1Wins();
@@ -187,22 +213,42 @@ public class HitWall : MonoBehaviour
             t2flag = false;
             Invoke("Convertt1Flag", 0.5f);
             // t1 double hit
-            if (lastAgentHit == 0 && t1flag)
+            if (lastTeamHit == 0 && t1flag)
             {
                 Debug.Log("t1 double hit");
-                t1_AgentA.AddReward(DOUBLEHIT_PUNISH);
-                t1_AgentB.AddReward(DOUBLEHIT_PUNISH);
+                if (lastAgentHit==0)
+                {
+                    t1_AgentA.AddReward(DOUBLEHIT_PUNISH);
+                }
+                if (lastAgentHit==1)
+                {
+                    t1_AgentB.AddReward(DOUBLEHIT_PUNISH);
+                }
                 t2Wins();
             }
             else
             {
                 //t2最后击球或t1发球时，t1球拍碰到球
-                if((lastAgentHit == 1 || lastAgentHit == -1)&& (collision.gameObject.name == "t1ABat"|| collision.gameObject.name == "t1BBat"))
+                if((lastTeamHit == 1 || lastTeamHit == -1)&& (collision.gameObject.name == "t1ABat"|| collision.gameObject.name == "t1BBat"))
                 {
-                    t1_AgentA.AddReward(HIT_REWARD);
-                    t1_AgentB.AddReward(HIT_REWARD);
+                    if(collision.gameObject.name == "t1ABat")
+                    {
+                        Debug.Log("t1A击球奖励");
+                        t1_AgentA.AddReward(HIT_REWARD);
+                        t1_AgentB.AddReward(BAIPIAO * HIT_REWARD);
+                        lastAgentHit = 0;
+                    }
+                    else if (collision.gameObject.name == "t1BBat")
+                    {
+                        Debug.Log("t1B击球奖励");
+                        t1_AgentA.AddReward(BAIPIAO * HIT_REWARD);
+                        t1_AgentB.AddReward(HIT_REWARD);
+                        lastAgentHit = 1;
+                    }
+                    
                 }
-                lastAgentHit = 0;
+
+                lastTeamHit = 0;
             }
         }
         else if (collision.gameObject.name == "t2_AgentA" || collision.gameObject.name == "t2ABat"|| collision.gameObject.name == "t2_AgentB" || collision.gameObject.name == "t2BBat")
@@ -210,24 +256,42 @@ public class HitWall : MonoBehaviour
             t1flag = false;
             Invoke("Convertt2Flag", 0.5f);
             // t2 double hit
-            if (lastAgentHit == 1 && t2flag)
+            if (lastTeamHit == 1 && t2flag)
             {
 
                 Debug.Log("t2 double hit");
-                t2_AgentA.AddReward(DOUBLEHIT_PUNISH);
-                t2_AgentB.AddReward(DOUBLEHIT_PUNISH);
+                if(lastAgentHit==0)
+                {
+                    t2_AgentA.AddReward(DOUBLEHIT_PUNISH);
+                }
+                else
+                {
+                    t2_AgentB.AddReward(DOUBLEHIT_PUNISH);
+                }
                 t1Wins();
             }
             else
             {
                 //t1最后击球或t2发球时，t2球拍碰到球
-                if ((lastAgentHit == 0 || lastAgentHit == -1) && (collision.gameObject.name == "t2ABat"|| collision.gameObject.name == "t2BBat"))
+                if ((lastTeamHit == 0 || lastTeamHit == -1) && (collision.gameObject.name == "t2ABat"|| collision.gameObject.name == "t2BBat"))
                 {
 
-                    t2_AgentA.AddReward(HIT_REWARD);
-                    t2_AgentB.AddReward(HIT_REWARD);
+                    if (collision.gameObject.name == "t2ABat")
+                    {
+                        Debug.Log("t2A击球奖励");
+                        t2_AgentA.AddReward(HIT_REWARD);
+                        t2_AgentB.AddReward(BAIPIAO * HIT_REWARD);
+                        lastAgentHit = 0;
+                    }
+                    else if (collision.gameObject.name == "t2BBat")
+                    {
+                        Debug.Log("t2B击球奖励");
+                        t2_AgentA.AddReward(BAIPIAO * HIT_REWARD);
+                        t2_AgentB.AddReward(HIT_REWARD);
+                        lastAgentHit = 1;
+                    }
                 }
-                lastAgentHit = 1;
+                lastTeamHit = 1;
 
             }
 
@@ -239,18 +303,39 @@ public class HitWall : MonoBehaviour
     {
         if (other.gameObject.name == "over")
         {
-            switch (lastAgentHit)
+            switch (lastTeamHit)
             {
                 case 0:
-                    Debug.LogWarning("t1AB击球过网奖励");
-                    t1_AgentA.AddReward(OVER_REWARD);
-                    t1_AgentB.AddReward(OVER_REWARD);
+                    
+                    if (lastAgentHit == 0)
+                    {
+                        Debug.LogWarning("t1A击球过网奖励");
+                        t1_AgentA.AddReward(OVER_REWARD);
+                        t1_AgentB.AddReward(BAIPIAO * OVER_REWARD);
+                    }
+                    else if (lastAgentHit == 1)
+                    {
+                        Debug.LogWarning("t1B击球过网奖励");
+                        t1_AgentA.AddReward(BAIPIAO * OVER_REWARD);
+                        t1_AgentB.AddReward(OVER_REWARD);
+                    }
+                    
 
                     break;
                 case 1:
-                    Debug.LogWarning("t2AB击球过网奖励");
-                    t2_AgentA.AddReward(OVER_REWARD);
-                    t2_AgentB.AddReward(OVER_REWARD);
+                    
+                    if (lastAgentHit == 0)
+                    {
+                        Debug.LogWarning("t2A击球过网奖励");
+                        t2_AgentA.AddReward(OVER_REWARD);
+                        t2_AgentB.AddReward(BAIPIAO * OVER_REWARD);
+                    }
+                    else if (lastAgentHit == 1)
+                    {
+                        Debug.LogWarning("t2B击球过网奖励");
+                        t2_AgentA.AddReward(BAIPIAO * OVER_REWARD);
+                        t2_AgentB.AddReward(OVER_REWARD);
+                    }
 
                     break;
 
@@ -261,7 +346,7 @@ public class HitWall : MonoBehaviour
 
     void Convertt2Flag()
     {
-        if(lastAgentHit!=-1)
+        if(lastTeamHit!=-1)
         {
             t2flag = true;
         }
@@ -271,7 +356,7 @@ public class HitWall : MonoBehaviour
     void Convertt1Flag()
     {
 
-        if (lastAgentHit != -1)
+        if (lastTeamHit != -1)
         {
             t1flag = true;
         }

@@ -510,7 +510,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 35
+    VectorObservationSize: 36
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 0
@@ -917,6 +917,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Bat
+      objectReference: {fileID: 0}
+    - target: {fileID: 1552988663497363086, guid: 9411b6bdc89f74749a73678f92e5807e,
+        type: 3}
+      propertyPath: m_TagString
+      value: bat
       objectReference: {fileID: 0}
     - target: {fileID: 3216622455144589951, guid: 9411b6bdc89f74749a73678f92e5807e,
         type: 3}

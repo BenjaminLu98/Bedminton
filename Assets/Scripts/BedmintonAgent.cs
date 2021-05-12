@@ -25,7 +25,6 @@ public class BedmintonAgent : Agent
     public float BatSpringForce;
     public bool hitting;
 
-    Text m_TextComponent;
     Rigidbody m_AgentRb;
     Rigidbody m_BallRb;
     float m_InvertMult;
@@ -35,12 +34,6 @@ public class BedmintonAgent : Agent
     Area Area;
     float distToMate;
     
-    // Looks for the scoreboard based on the name of the gameObjects.
-    // Do not modify the names of the Score GameObjects
-    const string k_CanvasName = "Canvas";
-    const string k_ScoreBoardAName = "ScoreA";
-    const string k_ScoreBoardBName = "ScoreB";
-
     public override void Initialize()
     {
         m_InvertMult = invertX ? -1f : 1f;
@@ -112,6 +105,7 @@ public class BedmintonAgent : Agent
                 //队友
                 distToMate = Mathf.Abs(Vector3.Distance(agent.transform.position, transform.position));
                 Rigidbody a_RB = agent.GetComponent<Rigidbody>();
+                sensor.AddObservation(distToMate);
                 sensor.AddObservation(m_InvertMult * (agent.transform.position.x - myArea.transform.position.x));
                 sensor.AddObservation(agent.transform.position.y - myArea.transform.position.y);
                 sensor.AddObservation(m_InvertMult * (agent.transform.position.z - myArea.transform.position.z));
@@ -172,13 +166,21 @@ public class BedmintonAgent : Agent
 
         }
         //防止距离过近
-        if (distToMate < 2f)
+        if (distToMate < 2.2f)
         {
-            var dist_punish = -0.07f * (1 - Normalize(distToMate, 0f, 2f));
+            var dist_punish = -1.2f * (1 - Normalize(distToMate, 0f, 2.2f));
             AddReward(dist_punish);
             Debug.Log(this.name + "Too Close!" + dist_punish);
         }
 
+        float distToBall = Mathf.Abs(Vector3.Distance(transform.position,ball.transform.position));
+
+        if (distToBall < 3.0f)
+        {
+            var ballDistReward = 0.02f * (1 - Normalize(distToBall, 0f, 3.0f));
+            AddReward(ballDistReward);
+            Debug.Log(this.name + "Close to Ball Reward:" + ballDistReward);
+        }
     }
 
 
@@ -216,7 +218,7 @@ public class BedmintonAgent : Agent
 
                 break;
         }
-        float agentDisToBall = Mathf.Abs(Vector3.Distance(transform.position, ball.transform.position));
+        
 
 
 
