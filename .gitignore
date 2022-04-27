@@ -58,3 +58,16 @@ sysinfo.txt
 # Crashlytics generated file
 crashlytics-build.properties
 
+Assets/ML-Agents/Timers/SampleScene_timers.json
+Assets/Prefabs/AgentCube_Blue.prefab
+Assets/Prefabs/Area4.prefab
+Assets/Prefabs/Bedminton.onnx
+Assets/Prefabs/Bedminton.onnx.meta
+Assets/Scenes/SampleScene.unity
+Assets/Scripts/BedmintonAgent.cs
+Packages/manifest.json
+Packages/packages-lock.json
+ProjectSettings/PackageManagerSettings.asset
+ProjectSettings/ProjectVersion.txt
+ProjectSettings/TimeManager.asset
+ProjectSettings/VersionControlSettings.asset

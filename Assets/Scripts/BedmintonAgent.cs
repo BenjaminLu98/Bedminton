@@ -63,7 +63,7 @@ public class BedmintonAgent : Agent
         return value;
     }
 
-  
+    //向sensor提供观测值，传递给算法
     public override void CollectObservations(VectorSensor sensor)
     {
         //球相对人的参数，前向、右向为正
@@ -74,8 +74,10 @@ public class BedmintonAgent : Agent
         sensor.AddObservation( m_BallRb.velocity.y);
         sensor.AddObservation(m_InvertMult * m_BallRb.velocity.z);
 
+        //拍子旋转角
         sensor.AddObservation(Bat.transform.localRotation.x);
 
+        //角色的参数
         sensor.AddObservation(m_InvertMult * (transform.position.x - myArea.transform.position.x));
         sensor.AddObservation(transform.position.y - myArea.transform.position.y);
         sensor.AddObservation(m_InvertMult * (transform.position.z-myArea.transform.position.z));
@@ -83,11 +85,11 @@ public class BedmintonAgent : Agent
         sensor.AddObservation(m_AgentRb.velocity.y);
         sensor.AddObservation(m_InvertMult * m_AgentRb.velocity.z);
 
+        //旋转角
         var m_localEularY = transform.localEulerAngles.y;
         if (invertX)
         {
             sensor.AddObservation(m_localEularY);
-            
         }
         else
         {
@@ -101,49 +103,55 @@ public class BedmintonAgent : Agent
             }
         }
 
-        Agent[] agents=new Agent[2]{Area.t1_AgentA,Area.t2_AgentA};
-        int m_teamNo=invertX?0:1;
-        
-        for(int i=0;i<2;i++)
+        //Agent[] agents=new Agent[2]{Area.t1_AgentA,Area.t2_AgentA};
+        //int m_teamNo=invertX?0:1;
+
+        //for(int i=0;i<2;i++)
+        //{
+        //    var agent=agents[i];
+        //    if(agent!=this)
+        //    {
+
+        //        Rigidbody a_RB = agent.GetComponent<Rigidbody>();
+        //        sensor.AddObservation(m_InvertMult * (agent.transform.position.x - myArea.transform.position.x));
+        //        sensor.AddObservation(agent.transform.position.y - myArea.transform.position.y);
+        //        sensor.AddObservation(m_InvertMult * (agent.transform.position.z - myArea.transform.position.z));
+        //        sensor.AddObservation(-m_InvertMult * a_RB.velocity.x);
+        //        sensor.AddObservation(a_RB.velocity.y);
+        //        sensor.AddObservation(m_InvertMult * a_RB.velocity.z);
+
+        //        var a_localEularY= a_RB.transform.localEulerAngles.y;
+        //        if (!invertX)
+        //        {
+        //            sensor.AddObservation(a_localEularY);
+        //        }
+        //        else
+        //        {
+        //            if (a_localEularY > 180f)
+        //            {
+        //                sensor.AddObservation(a_localEularY - 180f);
+        //            }
+        //            else
+        //            {
+        //                sensor.AddObservation(a_localEularY + 180f);
+        //            }
+        //        }
+
+        //    }
+
+        //}
+
+        float BatDisToBall = Mathf.Abs(Vector3.Distance(ball.transform.position, Bat.transform.position)) ;
+        if(BatDisToBall<3.5f)
         {
-            var agent=agents[i];
-            if(agent!=this)
-            {
-
-                Rigidbody a_RB = agent.GetComponent<Rigidbody>();
-                sensor.AddObservation(m_InvertMult * (agent.transform.position.x - myArea.transform.position.x));
-                sensor.AddObservation(agent.transform.position.y - myArea.transform.position.y);
-                sensor.AddObservation(m_InvertMult * (agent.transform.position.z - myArea.transform.position.z));
-                sensor.AddObservation(-m_InvertMult * a_RB.velocity.x);
-                sensor.AddObservation(a_RB.velocity.y);
-                sensor.AddObservation(m_InvertMult * a_RB.velocity.z);
-
-                var a_localEularY= a_RB.transform.localEulerAngles.y;
-                if (!invertX)
-                {
-                    sensor.AddObservation(a_localEularY);
-                }
-                else
-                {
-                    if (a_localEularY > 180f)
-                    {
-                        sensor.AddObservation(a_localEularY - 180f);
-                    }
-                    else
-                    {
-                        sensor.AddObservation(a_localEularY + 180f);
-                    }
-                }
-
-            }
-            
+            var reward = 0.04f * (1 - Normalize(BatDisToBall, 0f, 3.5f));
+            AddReward(reward);
+            Debug.Log(this.name + "BatDisToBallReward:" + reward);
         }
-            
-       
-        
+
     }
 
-
+    //处理从策略获得的动作，将其应用到游戏角色中
     public override void OnActionReceived(ActionBuffers actionBuffers)
     {
 
@@ -151,6 +159,7 @@ public class BedmintonAgent : Agent
         var Axis = discreteActions[3];
         var dirToGo = Vector3.zero;
         var RotToGo = Vector3.zero;
+        //移动方向选择
         switch (Axis)
         {
             case 1:
@@ -176,23 +185,22 @@ public class BedmintonAgent : Agent
         }
         float agentDisToBall = Mathf.Abs(Vector3.Distance(transform.position, ball.transform.position));
 
-
-
-        
+        //跳跃
         // 0-1
         var Jump = discreteActions[0];
         m_endurance -= 0.3f * Jump;
 
-
+        //挥拍
         //0-1
         var RotateBat = discreteActions[1];
         m_endurance -= 0.1f * Mathf.Abs(RotateBat);
 
-        
-
+        //转身
         //0-2
         var RotateBody = discreteActions[2];
         m_endurance -= 0.1f * Mathf.Abs(RotateBody);
+
+        //挥拍动作选择
         switch (RotateBat)
         {
             case 1:
@@ -202,6 +210,8 @@ public class BedmintonAgent : Agent
                 RotateBat = -1;
                 break;
         }
+
+        //转身动作选择
         switch (RotateBody)
         {
             case 1:
@@ -212,10 +222,10 @@ public class BedmintonAgent : Agent
                 break;
         }
 
-
         var BatJoint = Bat.GetComponent<HingeJoint>();
         var spring = BatJoint.spring;
 
+        //将挥拍动作应用到角色。
         if (!hitting && RotateBat == 1)
         {
             hitting = true;
@@ -223,8 +233,6 @@ public class BedmintonAgent : Agent
             spring.spring = BatSpringForce;
             spring.damper = 50f;
             BatJoint.spring = spring;
-
-
         }
         else if (RotateBat == -1)
         {
@@ -235,15 +243,10 @@ public class BedmintonAgent : Agent
             BatJoint.spring = spring;
         }
 
-
-
-        if(RotToGo!=Vector3.zero)
-        {
-
-        }
+        //旋转实现
         transform.Rotate(RotToGo, Time.deltaTime * 100f);
 
-
+        //跳跃实现
         if ( transform.parent.position.y - transform.position.y > -AgentResetLocalY-0.01f )
         {
             jumping = false;
@@ -252,16 +255,12 @@ public class BedmintonAgent : Agent
         if (!jumping && Jump==1)
         {
             jumping = true;
-
             //如果改了这个jump力，那么需要改观测值上下限！
             m_AgentRb.AddForce(new Vector3(0f,4f,0f), ForceMode.VelocityChange);
-
         }
         m_AgentRb.AddForce(new Vector3(dirToGo.x, 0f , dirToGo.z), ForceMode.VelocityChange);
 
-
-        
-        //防止越界!!!!!!!??????
+        //防止越界
         if (invertX && transform.position.x - transform.parent.transform.position.x > m_InvertMult ||
             !invertX && transform.position.x - transform.parent.transform.position.x < m_InvertMult)
         {
@@ -269,9 +268,9 @@ public class BedmintonAgent : Agent
                 transform.position.y,
                 transform.position.z);
         }
-
     }
 
+    //跳跃时向跳跃添加ActionMask
     public override void WriteDiscreteActionMask(IDiscreteActionMask actionMask)
     {
         if(jumping)

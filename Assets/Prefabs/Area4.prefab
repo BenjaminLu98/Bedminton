@@ -1075,6 +1075,12 @@ PrefabInstance:
       propertyPath: TeamId
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -3186172451312953304, guid: 616d49fb19a13b44e98f1c12232cafad,
+        type: 3}
+      propertyPath: m_Model
+      value: 
+      objectReference: {fileID: 5022602860645237092, guid: 09e87e28f4d2d484a9bd268cf6a78867,
+        type: 3}
     - target: {fileID: 6750486818406095, guid: 616d49fb19a13b44e98f1c12232cafad, type: 3}
       propertyPath: m_IsKinematic
       value: 0
@@ -1241,6 +1247,12 @@ PrefabInstance:
       propertyPath: invertX
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: -3186172451312953304, guid: 616d49fb19a13b44e98f1c12232cafad,
+        type: 3}
+      propertyPath: m_Model
+      value: 
+      objectReference: {fileID: 5022602860645237092, guid: 09e87e28f4d2d484a9bd268cf6a78867,
+        type: 3}
     - target: {fileID: 858247275852293908, guid: 616d49fb19a13b44e98f1c12232cafad,
         type: 3}
       propertyPath: m_ConnectedAnchor.x
